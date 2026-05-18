@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration Page</title>
+    <script src="https://kit.fontawesome.com/93f4cc41cc.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="registration.css">
+</head>
+<body>
+    <div class="container">
+        <h3><i class="fa-solid fa-book-open"></i> Library Management System</h3>
+        <h1>Create Admin Account</h1>
+        <p>Register a new administrator for the library system</p>
+
+        <div class="form">
+            <i class="fa-solid fa-user-shield" id="icon"></i>
+            <h2>Admin Register</h2>
+
+            <div class="form_input">
+                <form action="Admin.html" onsubmit="return saveAdminRegistration()">
+
+                    <!-- Full Name -->
+                     <h5>Admin Full Name:</h5>
+                     <div class="input-box">
+                        <i class="fa-solid fa-user"></i>
+                    <input type="text" placeholder="Enter admin full name" required minlength="3"
+                        pattern="[A-Za-z\s]+" title="Name must contain only letters"><br>
+                        </div>
+
+                    <!-- Admin ID -->
+                    <h5>Admin ID:</h5>
+                    <div class="input-box">
+                        <i class="fa-solid fa-id-card"></i>
+                    <input type="text" id="adminRegisterId" placeholder="Enter admin ID" required pattern="^ADM[0-9]{4}$" title="Admin ID must look like ADM1234"><br>
+                    </div>
+
+                    <!-- Email -->
+                 <h5>Admin Email:</h5>
+                <div class="input-box">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" placeholder="Enter admin email" required>
+                </div>
+
+                    <!-- Phone -->
+                    <h5>Phone Number:</h5>
+                    <div class="input-box">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" placeholder="Enter your phone number" required pattern="[0-9]{10}" title="Phone number must be 10 digits">
+                    </div>
+
+                    <!-- Position -->
+                   <h5>Admin Position:</h5>
+                    <div class="input-box">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <input type="text" placeholder="Enter admin position" required>
+                    </div>
+
+                    <!-- Role -->
+                    <h5>Role:</h5>
+                    <select name="role" required>
+                        <option value="admin">Admin</option>
+                        <option value="super-admin">Super Admin</option>
+                    </select><br><br>
+
+                    <!-- Password -->
+                    <h5>Admin Password:</h5>
+                    <div class="input-box">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="adminRegisterPassword" placeholder="Enter admin password" required minlength="6">
+                    </div>
+                    <br>
+
+                    <!-- Confirm Password -->
+                    <h5>Confirm Password:</h5>
+                    <div class="input-box">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="adminConfirmPassword" placeholder="Confirm admin password" required minlength="6">
+                    </div>
+                    <br>
+
+                    <!-- Button -->
+                    <button type="submit" id="btn">Create Admin Account</button>
+
+                    <p>Already have an admin account? <a href="login.html">Login</a></p>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function saveAdminRegistration() {
+            const adminId = document.getElementById('adminRegisterId').value.trim();
+            const password = document.getElementById('adminRegisterPassword').value;
+            const confirmPassword = document.getElementById('adminConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match.');
+                return false;
+            }
+
+            localStorage.setItem('adminId', adminId);
+            localStorage.setItem('adminPassword', password);
+            localStorage.setItem('adminLoggedIn', 'true');
+            return true;
+        }
+    </script>
+</body>
+</html>

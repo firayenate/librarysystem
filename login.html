@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login Page</title>
+        <script src="https://kit.fontawesome.com/93f4cc41cc.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="container">
+        <h3><i class="fa-solid fa-book-open"></i> Library Management System</h3>
+        <h1>Login to LibriNet</h1>
+        <p>Access the library management system</p>
+
+        <div class="form">
+            <i class="fa-solid fa-user-shield" id="icon"></i>
+            <div class="login-tabs">
+                <button type="button" id="adminTab" class="login-tab active" onclick="setLoginMode('admin')">Admin</button>
+                <button type="button" id="studentTab" class="login-tab" onclick="setLoginMode('student')">Student</button>
+            </div>
+            <h2 id="loginTitle">Admin Login</h2>
+            <div class="form-login">
+                <form id="loginForm" onsubmit="return handleLogin()">
+                   <h5 id="idLabel">Admin ID:</h5>
+                <div class="input-box">
+                    <i class="fa-solid fa-id-card"></i>
+                    <input type="text" id="loginId" placeholder="Enter ID" required>
+                </div>
+                    <h5>Admin Password:</h5>
+                    <div class="input-box">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="Enter password" required minlength="6">
+                    </div>
+                    <div class="check">
+                    <input type="checkbox" id="remember"> Remember Me<br><br>
+                    </div>
+                    <h5 id="forget"><a href="#">Forget Password?</a></h5>
+                    <button type="submit" id="btn">Login</button>
+            <div class="or-divider">
+                    <span>OR</span>
+            </div>
+             <button class="google-btn" type="button">
+            <svg class="google-icon" viewBox="0 0 533.5 544.3">
+            <path fill="#4285F4" d="M533.5 278.4c0-18.5-1.5-36.3-4.3-53.6H272v101.5h146.9c-6.3 34.1-25 63-53.5 82.4v68h86.6c50.6-46.6 80-115.2 80-198.3z"/>
+            <path fill="#34A853" d="M272 544.3c72.6 0 133.5-24 178-65.2l-86.6-68c-24 16.1-54.8 25.6-91.4 25.6-70.3 0-130-47.5-151.4-111.2H31.4v69.7C75.6 486.4 167.4 544.3 272 544.3z"/>
+            <path fill="#FBBC05" d="M120.6 325.5c-10.5-31.2-10.5-64.9 0-96.1v-69.7H31.4c-39.7 79.3-39.7 172.2 0 251.5l89.2-69.7z"/>
+            <path fill="#EA4335" d="M272 107.7c39.5 0 75 13.6 103 40.4l77.3-77.3C405.5 24.2 344.6 0 272 0 167.4 0 75.6 57.9 31.4 148.7l89.2 69.7C142 155.2 201.7 107.7 272 107.7z"/>
+        </svg>
+
+            Continue with Google
+        </button>
+          <p id="registerAdminText">Need an admin account? <a href="registration.html">Register Admin</a></p>
+          <p id="registerStudentText" style="display:none;">Need a student account? <a href="registration_user.html">Register Student</a></p>
+                </form>
+            </div>
+            </div>
+    </div>
+    <script>
+        let loginMode = 'admin';
+
+        function setLoginMode(mode) {
+            loginMode = mode;
+            document.getElementById('adminTab').classList.toggle('active', mode === 'admin');
+            document.getElementById('studentTab').classList.toggle('active', mode === 'student');
+            
+            document.getElementById('loginTitle').textContent = mode === 'admin' ? 'Admin Login' : 'Student Login';
+            document.getElementById('idLabel').textContent = mode === 'admin' ? 'Admin ID:' : 'Student ID:';
+            document.getElementById('loginId').placeholder = mode === 'admin' ? 'Enter admin ID' : 'Enter student ID';
+            document.getElementById('icon').className = mode === 'admin' ? 'fa-solid fa-user-shield' : 'fa-solid fa-user-graduate';
+            
+            document.getElementById('registerAdminText').style.display = mode === 'admin' ? 'block' : 'none';
+            document.getElementById('registerStudentText').style.display = mode === 'student' ? 'block' : 'none';
+        }
+
+        function handleLogin() {
+            const id = document.getElementById('loginId').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (loginMode === 'admin') {
+                const savedId = localStorage.getItem('adminId') || 'ADM1234';
+                const savedPassword = localStorage.getItem('adminPassword') || 'admin123';
+
+                if (id !== savedId) {
+                    alert('Admin ID is not correct.');
+                    return false;
+                }
+                if (password !== savedPassword) {
+                    alert('Admin password is not correct.');
+                    return false;
+                }
+
+                localStorage.setItem('adminLoggedIn', 'true');
+                window.location.href = "Admin.html";
+            } else {
+                // Mock Student Login
+                localStorage.setItem('userLoggedIn', 'true');
+                window.location.href = "User.html";
+            }
+            return false;
+        }
+    </script>
+</body>
+</html>
