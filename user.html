@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>user page</title>
+  <link rel="stylesheet" href="user.css">
+  <link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav-bar">
+       <div class="logo">
+            <img src="img/logo.png" alt="LibriNet Logo" id="img">
+            <h2>LibriNet</h2>
+        </div>
+      <nav>
+
+        <li><a href="#home">Home</a></li>
+        <li><a href="#myprofile">My Profile</a></li>
+        <li><a href="#Browse">Browse Catalog</a></li>
+        <li><a href="#resource">Resources</a></li>
+        <li><a href="#hold">Hold</a></li>
+      </nav>
+    </div>
+  </div>
+  <div class="home-page" id="home">
+    <div class="upper-home">
+      <h1>Welcome to LibriNet</h1>
+      <h3>Your digital library,anytime,anywhere.</h3>
+      <p>Explore a vast collection of books,resources, and <br> knowledge at your fingertips</p>
+        <div class="search-box">
+                <select id="searchTypeHome">
+                    <option value="title">Title</option>
+                    <option value="author">Author</option>
+                    <option value="subject">Subject</option>
+                </select>
+                <input type="text" id="searchInputHome" placeholder="Search books..." />
+                <button onclick="searchBook('Home')">Search</button>
+            </div>
+    </div>
+  <div class="lower-home">
+    <h2>Everything You Need,All in one Place</h2>
+    <div class="dashboard">
+      <div class="dashboard-cards">
+        <i class="fa-solid fa-book"></i>
+        <h3>Browse Catalog</h3>
+          
+        <p>
+          Discover books,journals,<br>
+          and more from our <br>
+           extensive collection,
+        </p>
+      </div>
+      <div class="dashboard-cards">
+        <i class="fa-solid fa-user"></i>
+        <h3>My Profile</h3>
+        <p>
+         Manage your account, <br>
+         borrowing history, <br>
+         and preferences
+        </p>
+      </div>
+       <div class="dashboard-cards">
+    <i class="fa-solid fa-folder-open"></i>
+    <h3>Resources</h3>
+    <p>
+      Access e-books, study <br>
+      materials, and helpful <br>
+      resources.
+    </p>
+  </div>
+ <div class="dashboard-cards">
+    <i class="fa-solid fa-bookmark"></i>
+    <h3>Hold</h3>
+    <p>
+      Place holds on books <br>
+      and get notified when <br>
+      they're available.
+    </p>
+  </div>
+     <div class="dashboard-cards">
+    <i class="fa-solid fa-bell"></i>
+    <h3>Stay Updated</h3>
+    <p>
+      Get the latest updates <br>
+      and notifications from <br>
+      your library.
+    </p>
+  </div>
+    </div>
+   <div class="quote-card">
+  <div class="quote-content">
+    <span class="quote-icon">&ldquo;</span>
+    <div class="text-group">
+      <p class="quote-text">"A library is not a luxury but one of the necessities of life."</p>
+      <p class="author">&ndash; Henry Ward Beecher</p>
+    </div>
+  </div>
+  <div class="illustration">
+    <span class="icon-placeholder">📚🪴</span>
+  </div>
+</div>
+      
+    </div>
+  </div>
+  </div>
+
+  <div class="profile" id="myprofile">
+    <div class="right">
+<div class="sidebar-buttons">
+    <button>  <i class="fa-solid fa-user"></i>Profile Overview</button>
+    <button>  <i class="fa-solid fa-user"></i>Personal Information</button>
+    <button><i class="fa-solid fa-clock-rotate-left"></i>Borrowing History</button>
+    <button><i class="fa-solid fa-bookmark"></i>Holds</button>
+    <button><i class="fa-solid fa-star"></i>Favorites</button>
+    <button><i class="fa-solid fa-gear"></i>Settings</button>
+    <button><i class="fa-solid fa-bell"></i>Notifications</button>
+    <button><i class="fa-solid fa-key"></i>Change Password</button>
+    <button><i class="fa-solid fa-right-from-bracket"></i>Logout</button>
+    <hr>
+    <div class="help">
+    <h2><i class="fa-solid fa-headset"></i>Need Help?</h2>
+    <p>Contact our support <br>
+    team for any assitance</p>
+    <button id="btn">Contact Support</button>
+    </div>
+</div>
+    </div>
+    <div class="middle">
+      <h1>My Profile</h1>
+      <p>Manage your account information and library activities.</p>
+
+      <div class="profile-card">
+
+    <div class="profile-left">
+        <div class="avatar">
+            <i class="fa-solid fa-user"></i>
+        </div>
+
+        <div class="info">
+            <h3>Firaol Tadesse</h3>
+            <p>firaol.tadesse@example.com</p>
+
+            <div class="meta">
+                <span><i class="fa-solid fa-phone"></i> +251 92 654 478</span>
+                <span><i class="fa-solid fa-calendar"></i> Member since May 2024</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-right">
+        <button>Edit Profile</button>
+    </div>
+
+</div>
+
+<div class="tables">
+  <div class="leftside">
+    <table>
+      <tr>
+        <th colspan="2">Personal Information</th>
+      </tr>
+      <tr>
+        <td>Full Name</td>
+        <td>Firaol Tadesse</td>
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td>firaoltadesse@example.com</td>
+      </tr>
+      <tr>
+        <td>Phone</td>
+        <td>+2519356394</td>
+      </tr>
+      <tr>
+        <td>Data of birth</td>
+        <td>January 15,2002</td>
+      </tr>
+      <tr>
+        <td>Gender</td>
+        <td>Male</td>
+      </tr>
+    </table>
+  </div>
+  <div class="rightside">
+    <table>
+      <tr>
+        <th colspan="2">Address</th>
+      </tr>
+      <tr>
+        <td>Street</td>
+        <td>Bole Road,Near Edna Mall</td>
+      </tr>
+      <tr>
+        <td>City</td>
+        <td>Addis Ababa</td>
+      </tr>
+      <tr>
+        <td>State/Region</td>
+        <td>+Addis Ababa</td>
+      </tr>
+      <tr>
+        <td>Country</td>
+        <td>Ethiopia</td>
+      </tr>
+      <tr>
+        <td>Postal Code</td>
+        <td>1000</td>
+      </tr>
+    </table>
+  </div>
+  </div>
+    </div>
+    <div class="left">
+      <h2><i class="fa-solid fa-shield-halved"></i>Library Member</h2>
+      <button>Active Member</button>
+      <p>Member ID</p>
+      <p>LIB123456789</p>
+      <h3>Membership Type</h3>
+      <h3>Regular  Member</h3>
+    </div>
+    <div class="lower">
+  <div class="at-glance-container">
+    <div class="at-glance-header">
+      <i class="fa-solid fa-bolt"></i> <!-- Using bolt for the pulse icon -->
+      <h3>At a Glance</h3>
+    </div>
+
+    <div class="glance-card">
+      <div class="glance-icon"><i class="fa-solid fa-book-open"></i></div>
+      <div class="glance-info">
+        <span class="count">7</span>
+        <p>Books Borrowed</p>
+      </div>
+    </div>
+
+    <div class="glance-card">
+      <div class="glance-icon"><i class="fa-solid fa-bookmark"></i></div>
+      <div class="glance-info">
+        <span class="count">2</span>
+        <p>Books on Hold</p>
+      </div>
+    </div>
+
+    <div class="glance-card">
+      <div class="glance-icon"><i class="fa-solid fa-heart"></i></div>
+      <div class="glance-info">
+        <span class="count">5</span>
+        <p>Favorite Books</p>
+      </div>
+    </div>
+
+    <div class="glance-card">
+      <div class="glance-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+      <div class="glance-info">
+        <span class="count">3</span>
+        <p>Recent Searches</p>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+<div class="quote-card">
+  <div class="quote-content">
+    <span class="quote-icon">&ldquo;</span>
+    <div class="text-group">
+      <p class="quote-text">"A library is not a luxury but one of the necessities of life."</p>
+      <p class="author">&ndash; Henry Ward Beecher</p>
+    </div>
+  </div>
+  <div class="illustration">
+    <span class="icon-placeholder">📚🪴</span>
+  </div>
+</div>
+<div class="browse" id="Browse">
+  <h1><i class="fa-solid fa-book-open"></i>Browse Catalog</h1>
+  <p>Search and discover books from our library collection.</p>
+
+      <div class="finding">
+
+        <h3>Search
+          <br> <input type="text" id="searchInputBooks" placeholder="Search books..." />
+        </h3>
+        <h3>category <br>
+           <select id="categories">
+        <option value="">All Categories</option></h3>
+        </select>
+        <h3>Format <br>
+        <select name="" id="formats">
+          <option value="">All Formats</option>
+        </select>
+      </h3>
+        <h3>Availability <br>
+        <select name="" id="availability">
+          <option value="">All Availbility</option>
+        </select>
+        </h3>
+        <button id="btn">Search</button>
+        </div>
+        <div class="finding info">
+          <h3>Quick Filters:</h3>
+          <button id="btns"><i class="fa-regular fa-book-open"></i>All Books</button>
+          <button id="btns"><i class="fa-regular fa-circle-check"></i>Available Now</button>
+          <button id="btns"> <i class="fa-solid fa-tablet-screen-button"></i>E-Books</button>
+          <button id="btns"> <i class="fa-solid fa-arrow-trend-up"></i>Most Borrowed</button>
+          <button id="btns"> <i class="fa-regular fa-star"></i>New Arrivals</button>
+      </div>
+      <div class="catego">
+         <h2>Browse by category</h2>
+      
+      <div class="dashboards">
+
+        <div class="dashboard">
+          <i class="fa-solid fa-book-open"></i>  
+          <h3>Friction</h3>
+          <h4>120 Books</h4>
+        </div>
+        <div class="dashboard">
+          <i class="fa-solid fa-flask"></i>   
+          <h3>Science</h3>
+          <h4>120 Books</h4>
+        </div>
+        <div class="dashboard">
+          <i class="fa-solid fa-graduation-cap"></i> 
+          <h3>Education</h3>
+          <h4>120 Books</h4>
+        </div>
+        <div class="dashboard">
+          <i class="fa-solid fa-code"></i> 
+          <h3>Technology</h3>
+          <h4>120 Books</h4>
+        </div>
+        <div class="dashboard">
+          <i class="fa-solid fa-heart-pulse"></i>  
+          <h3>Health</h3>
+          <h4>120 Books</h4>
+        </div>
+        <div class="dashboard">
+          <i class="fa-solid fa-chart-simple"></i> 
+          <h3>Business</h3>
+          <h4>120 Books</h4>
+        </div>
+        <div class="dashboard">
+          <i class="fa-solid fa-palette"></i>     
+          <h3>Arts & Design</h3>
+          <h4>120 Books</h4>
+        </div>
+      </div>
+      </div>
+     <div class="recent-activity">
+  <h2>Recent Activity</h2>
+  <table class="activity-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Book</th>
+        <th>Date</th>
+        <th>Due Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="activity-icon-cell">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+        </td>
+        <td>
+          <div class="book-title">Atomic Habits</div>
+          <div class="book-author">James Clear</div>
+        </td>
+        <td>May 10, 2026</td>
+        <td>May 24, 2026</td>
+        <td><span class="activity-badge borrowed">Borrowed</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="activity-icon-cell">
+            <i class="fa-solid fa-bookmark"></i>
+          </div>
+        </td>
+        <td>
+          <div class="book-title">The Alchemist</div>
+          <div class="book-author">Paulo Coelho</div>
+        </td>
+        <td>May 8, 2026</td>
+        <td>—</td>
+        <td><span class="activity-badge hold">On Hold</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="activity-icon-cell">
+            <i class="fa-solid fa-rotate-left"></i>
+          </div>
+        </td>
+        <td>
+          <div class="book-title">Deep Work</div>
+          <div class="book-author">Cal Newport</div>
+        </td>
+        <td>May 5, 2026</td>
+        <td>—</td>
+        <td><span class="activity-badge returned">Returned</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="activity-icon-cell">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+        </td>
+        <td>
+          <div class="book-title">Sapiens</div>
+          <div class="book-author">Yuval Noah Harari</div>
+        </td>
+        <td>Apr 20, 2026</td>
+        <td>May 4, 2026</td>
+        <td><span class="activity-badge overdue">Overdue</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+      </div>
+ <div class="resources-page" id="resource">
+
+  <!-- Header -->
+  <h1><i class="fa-solid fa-folder-open"></i> Resources</h1>
+  <p>Access e-books, study materials, and helpful resources.</p>
+
+  <!-- Search Bar -->
+  <div class="resource-search-bar">
+    <div class="resource-search-group">
+      <label>Search Resources</label>
+      <div class="resource-input-wrap">
+        <input type="text" placeholder="Search by title, author, or keyword..." />
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+    </div>
+    <div class="resource-search-group">
+      <label>Resource Type</label>
+      <select>
+        <option>All Types</option>
+        <option>E-Books</option>
+        <option>Journals</option>
+        <option>Study Materials</option>
+        <option>Videos</option>
+        <option>Web Resources</option>
+      </select>
+    </div>
+    <div class="resource-search-group">
+      <label>Format</label>
+      <select>
+        <option>All Formats</option>
+        <option>PDF</option>
+        <option>Video</option>
+        <option>Website</option>
+      </select>
+    </div>
+    <button class="resource-search-btn">Search</button>
+  </div>
+
+  <!-- Quick Filters -->
+  <div class="resource-filters">
+    <button class="rf-btn active"><i class="fa-solid fa-table-cells"></i> All Resources</button>
+    <button class="rf-btn"><i class="fa-solid fa-tablet-screen-button"></i> E-Books</button>
+    <button class="rf-btn"><i class="fa-solid fa-newspaper"></i> Journals</button>
+    <button class="rf-btn"><i class="fa-solid fa-graduation-cap"></i> Study Materials</button>
+    <button class="rf-btn"><i class="fa-solid fa-circle-play"></i> Videos</button>
+    <button class="rf-btn"><i class="fa-solid fa-globe"></i> Web Resources</button>
+  </div>
+
+  <!-- Featured Resources -->
+  <div class="featured-resources">
+    <h2>Featured Resources</h2>
+    <div class="featured-grid">
+      <div class="featured-card">
+        <div class="featured-icon" style="background:#e8f5e9;">
+          <i class="fa-solid fa-book-open" style="color:#1a7a4a;"></i>
+        </div>
+        <div class="featured-info">
+          <h3>E-Books</h3>
+          <p>Thousands of e-books available 24/7</p>
+          <span class="featured-count">1,245 Resources</span>
+        </div>
+      </div>
+      <div class="featured-card">
+        <div class="featured-icon" style="background:#fff8e1;">
+          <i class="fa-solid fa-newspaper" style="color:#f59e0b;"></i>
+        </div>
+        <div class="featured-info">
+          <h3>Journals</h3>
+          <p>Research papers and academic journals</p>
+          <span class="featured-count">842 Resources</span>
+        </div>
+      </div>
+      <div class="featured-card">
+        <div class="featured-icon" style="background:#e0f2fe;">
+          <i class="fa-solid fa-graduation-cap" style="color:#0ea5e9;"></i>
+        </div>
+        <div class="featured-info">
+          <h3>Study Materials</h3>
+          <p>Notes, guides, and study resources</p>
+          <span class="featured-count">1,532 Resources</span>
+        </div>
+      </div>
+      <div class="featured-card">
+        <div class="featured-icon" style="background:#f3e8ff;">
+          <i class="fa-solid fa-circle-play" style="color:#9333ea;"></i>
+        </div>
+        <div class="featured-info">
+          <h3>Videos</h3>
+          <p>Educational videos and tutorials</p>
+          <span class="featured-count">624 Resources</span>
+        </div>
+      </div>
+      <div class="featured-card">
+        <div class="featured-icon" style="background:#e0f7fa;">
+          <i class="fa-solid fa-globe" style="color:#0891b2;"></i>
+        </div>
+        <div class="featured-info">
+          <h3>Web Resources</h3>
+          <p>Useful websites and online resources</p>
+          <span class="featured-count">356 Resources</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Resources -->
+  <div class="all-resources">
+    <div class="all-resources-header">
+      <h2>All Resources</h2>
+      <div class="sort-wrap">
+        <label>Sort by:</label>
+        <select><option>Newest Added</option><option>Most Popular</option></select>
+        <button class="view-btn active"><i class="fa-solid fa-table-cells-large"></i></button>
+        <button class="view-btn"><i class="fa-solid fa-list"></i></button>
+      </div>
+    </div>
+
+    <div class="resource-cards">
+
+      <div class="resource-card">
+        <div class="resource-cover ebook-cover">
+          <span class="resource-tag ebook-tag">E-Book</span>
+          <div class="cover-placeholder"><i class="fa-solid fa-book"></i></div>
+        </div>
+        <div class="resource-card-info">
+          <h4>Learning Python</h4>
+          <p class="resource-author">Mark Lutz</p>
+          <p class="resource-meta"><i class="fa-solid fa-file-pdf"></i> PDF &nbsp; 12.4 MB</p>
+          <button class="resource-action-btn"><i class="fa-solid fa-eye"></i> View</button>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-cover ebook-cover">
+          <span class="resource-tag ebook-tag">E-Book</span>
+          <div class="cover-placeholder"><i class="fa-solid fa-book"></i></div>
+        </div>
+        <div class="resource-card-info">
+          <h4>Introduction to Databases</h4>
+          <p class="resource-author">C. J. Date</p>
+          <p class="resource-meta"><i class="fa-solid fa-file-pdf"></i> PDF &nbsp; 8.7 MB</p>
+          <button class="resource-action-btn"><i class="fa-solid fa-eye"></i> View</button>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-cover journal-cover">
+          <span class="resource-tag journal-tag">Journal</span>
+          <div class="cover-placeholder"><i class="fa-solid fa-newspaper"></i></div>
+        </div>
+        <div class="resource-card-info">
+          <h4>Journal of Computer Science</h4>
+          <p class="resource-author">Volume 18, Issue 2, 2024</p>
+          <p class="resource-meta"><i class="fa-solid fa-file-pdf"></i> PDF &nbsp; 2.3 MB</p>
+          <button class="resource-action-btn"><i class="fa-solid fa-eye"></i> View</button>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-cover study-cover">
+          <span class="resource-tag study-tag">Study Material</span>
+          <div class="cover-placeholder"><i class="fa-solid fa-graduation-cap"></i></div>
+        </div>
+        <div class="resource-card-info">
+          <h4>Data Structures & Algorithms Study Guide</h4>
+          <p class="resource-author">Computer Science Dept.</p>
+          <p class="resource-meta"><i class="fa-solid fa-file-pdf"></i> PDF &nbsp; 3.1 MB</p>
+          <button class="resource-action-btn"><i class="fa-solid fa-eye"></i> View</button>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-cover video-cover">
+          <span class="resource-tag video-tag">Video</span>
+          <div class="cover-placeholder"><i class="fa-solid fa-circle-play"></i></div>
+        </div>
+        <div class="resource-card-info">
+          <h4>Machine Learning Fundamentals</h4>
+          <p class="resource-author">Prof. Andrew Ng</p>
+          <p class="resource-meta"><i class="fa-solid fa-clock"></i> 45 min</p>
+          <button class="resource-action-btn"><i class="fa-solid fa-circle-play"></i> Watch</button>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="resource-cover web-cover">
+          <span class="resource-tag web-tag">Web Resource</span>
+          <div class="cover-placeholder"><i class="fa-solid fa-globe"></i></div>
+        </div>
+        <div class="resource-card-info">
+          <h4>MDN Web Docs</h4>
+          <p class="resource-author">Mozilla Developer Network</p>
+          <p class="resource-meta"><i class="fa-solid fa-globe"></i> Website</p>
+          <button class="resource-action-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> Visit</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pagination -->
+    <div class="resource-pagination">
+      <button class="page-arrow"><i class="fa-solid fa-arrow-left"></i></button>
+      <button class="page-num active">1</button>
+      <button class="page-num">2</button>
+      <button class="page-num">3</button>
+      <button class="page-num">4</button>
+      <button class="page-num">5</button>
+      <span>...</span>
+      <button class="page-num">20</button>
+      <button class="page-arrow"><i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+
+  </div>
+</div>
+ 
+</body>
+</html>
