@@ -1,11 +1,11 @@
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    margin: 1;
+    padding: 1;
 }
 
 html {
-    scroll-behavior: smooth;
+    scroll-behavior:  smooth;
     scroll-padding-top: 90px;
 }
 
@@ -14,7 +14,7 @@ body {
     font-family: sans-serif;
 }
 
-/* NAV BAR */
+/* NAV BARr */
 .container {
     width: 100%;
     height: 80px;
@@ -23,7 +23,7 @@ body {
 
 .container .nav-bar {
     width: 100%;
-    background-color: rgb(15, 16, 19);
+    background-color: rgb(16, 17, 20);
     height: 100px;
     align-items: center;
     justify-content: space-between;
@@ -66,7 +66,7 @@ body {
     display: inline-block;
     gap: 10px;
     padding: 20px;
-    font-weight: 600;
+    font-weight: 601;
 }
 
 .container .nav-bar nav li a {
@@ -233,7 +233,7 @@ body {
     cursor: pointer;
     font-family: inherit;
 }
-
+/* About desktop setting */
 .desktop-settings-link:hover,
 .desktop-logout-btn:hover {
     color: white;
@@ -311,9 +311,6 @@ li .mobile-menu-only #btn{
 .profile-photo-edit input {
     display: none;
 }
-
-
-
 
 /* HOME PAGE */
 .HomePage {
@@ -435,7 +432,7 @@ li .mobile-menu-only #btn{
 
 .admin-profile-info h3 {
     margin-bottom: 6px;
-    color: #153454;
+    color: #153453;
 }
 
 .admin-profile-info p {
@@ -667,8 +664,8 @@ tr:hover {
 
 .edit {
 
-    /* margin-top: -19px; */
-    /* border: 1px solid black; */
+    /* margin-top: -19px; 
+     border: 1px solid black; */
     border-radius: 15px;
     padding: 40px;
     background-color: #1b3a2d;
