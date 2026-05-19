@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../db_connect.php';
+require_once 'db_connect.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['adminLoggedIn']) && !isset($_SESSION['userLoggedIn'])) {
@@ -60,18 +60,16 @@ else if ($method === 'POST') {
         $borrowDate = $data['borrowDate'];
         $dueDate = $data['dueDate'];
         
-        // Ensure book is available and has copies
-        $check = $conn->prepare("SELECT status, copies FROM books WHERE id = ?");
+        // Ensure book is available
+        $check = $conn->prepare("SELECT status FROM books WHERE id = ?");
         $check->bind_param("i", $bookId);
         $check->execute();
         $res = $check->get_result();
-        $currentCopies = 0;
         if($row = $res->fetch_assoc()) {
-            if($row['copies'] <= 0 || $row['status'] === 'Borrowed' || $row['status'] === 'Unavailable') {
-                echo json_encode(["success" => false, "error" => "Book is out of stock or currently unavailable"]);
+            if($row['status'] === 'Borrowed') {
+                echo json_encode(["success" => false, "error" => "Book is already borrowed"]);
                 exit();
             }
-            $currentCopies = (int)$row['copies'];
         } else {
             echo json_encode(["success" => false, "error" => "Book not found"]);
             exit();
@@ -83,12 +81,9 @@ else if ($method === 'POST') {
         $stmt->bind_param("siss", $studentId, $bookId, $borrowDate, $dueDate);
         
         if($stmt->execute()) {
-            // Decrement copies and update status if it hits 0
-            $newCopies = $currentCopies - 1;
-            $newStatus = ($newCopies > 0) ? 'Available' : 'Unavailable';
-            
-            $upd = $conn->prepare("UPDATE books SET copies = ?, status = ? WHERE id = ?");
-            $upd->bind_param("isi", $newCopies, $newStatus, $bookId);
+            // Update book status
+            $upd = $conn->prepare("UPDATE books SET status = 'Borrowed' WHERE id = ?");
+            $upd->bind_param("i", $bookId);
             $upd->execute();
             $upd->close();
             
@@ -117,20 +112,9 @@ else if ($method === 'POST') {
             $stmt = $conn->prepare("UPDATE issued_books SET status = 'Returned' WHERE id = ?");
             $stmt->bind_param("i", $issueId);
             if($stmt->execute()) {
-                // Find current copies to increment
-                $chk = $conn->prepare("SELECT copies FROM books WHERE id = ?");
-                $chk->bind_param("i", $bookId);
-                $chk->execute();
-                $res = $chk->get_result();
-                $currentCopies = 0;
-                if ($r = $res->fetch_assoc()) $currentCopies = (int)$r['copies'];
-                $chk->close();
-                
-                $newCopies = $currentCopies + 1;
-
-                // Update book status back to Available and increment copies
-                $upd = $conn->prepare("UPDATE books SET status = 'Available', copies = ? WHERE id = ?");
-                $upd->bind_param("ii", $newCopies, $bookId);
+                // Update book status back to Available
+                $upd = $conn->prepare("UPDATE books SET status = 'Available' WHERE id = ?");
+                $upd->bind_param("i", $bookId);
                 $upd->execute();
                 $upd->close();
                 

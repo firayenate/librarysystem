@@ -43,6 +43,7 @@ body {
     border-radius: 15px;
     background-color: white;
     color: black;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 /* Icon */
@@ -108,6 +109,11 @@ body {
     color: white;
     cursor: pointer;
     border: none;
+    transition: 0.3s;
+}
+
+#btn:hover {
+    background-color: #0d253b;
 }
 
 /* Link */
@@ -116,14 +122,38 @@ body {
     color: #153454;
 }
 
-/* Responsive tweaks */
-@media (max-width: 600px) {
+/* RESPONSIVENESS */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    .container h1 {
+        font-size: 1.8rem;
+    }
     .form {
         width: 95%;
-        padding: 15px;
+        padding: 20px 15px;
+        margin: 10px auto;
     }
+}
 
+@media (max-width: 480px) {
     .container h3 {
-        font-size: 1.2em;
+        font-size: 1.1rem;
+    }
+    .container h1 {
+        font-size: 1.5rem;
+    }
+    .container p {
+        font-size: 0.85rem;
+        padding: 0 10px;
+    }
+    #icon {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+    }
+    .form {
+        padding: 15px;
     }
 }

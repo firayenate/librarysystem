@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../db_connect.php';
+require_once 'db_connect.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['adminLoggedIn']) && !isset($_SESSION['userLoggedIn'])) {
@@ -38,7 +38,7 @@ else if ($method === 'POST') {
         if($stmt->execute()) {
             echo json_encode(["success" => true, "id" => $conn->insert_id]);
         } else {
-            echo json_encode(["success" => false, "error" => "Database error occurred. Please contact support."]);
+            echo json_encode(["success" => false, "error" => $conn->error]);
         }
         $stmt->close();
     }

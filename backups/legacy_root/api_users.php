@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../db_connect.php';
+require_once 'db_connect.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['adminLoggedIn'])) {
@@ -30,33 +30,18 @@ else if ($method === 'POST') {
             echo json_encode(["success" => false, "error" => "Invalid email format."]);
             exit();
         }
-        $id   = $data['id'];
+        $id = $data['id'];
         $name = $data['name'];
         $email = $data['email'];
-        $dept = $data['department'] ?? '';
-        $year = $data['year'] ?? '';
-
-        // Check if admin wants to reset the password
-        $newPassword = isset($data['password']) ? trim($data['password']) : '';
-
-        if ($newPassword !== '') {
-            // Validate minimum length server-side too
-            if (strlen($newPassword) < 6) {
-                echo json_encode(["success" => false, "error" => "Password must be at least 6 characters."]);
-                exit();
-            }
-            $hashedPwd = password_hash($newPassword, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare("UPDATE users SET full_name=?, email=?, department=?, year_of_study=?, password_hash=? WHERE student_id=?");
-            $stmt->bind_param("ssssss", $name, $email, $dept, $year, $hashedPwd, $id);
-        } else {
-            $stmt = $conn->prepare("UPDATE users SET full_name=?, email=?, department=?, year_of_study=? WHERE student_id=?");
-            $stmt->bind_param("sssss", $name, $email, $dept, $year, $id);
-        }
-
+        $dept = $data['department'];
+        $year = $data['year'];
+        
+        $stmt = $conn->prepare("UPDATE users SET full_name=?, email=?, department=?, year_of_study=? WHERE student_id=?");
+        $stmt->bind_param("sssss", $name, $email, $dept, $year, $id);
         if($stmt->execute()) {
             echo json_encode(["success" => true]);
         } else {
-            echo json_encode(["success" => false, "error" => "Database error occurred. Please contact support."]);
+            echo json_encode(["success" => false, "error" => $conn->error]);
         }
         $stmt->close();
     }
@@ -67,7 +52,7 @@ else if ($method === 'POST') {
         if($stmt->execute()) {
             echo json_encode(["success" => true]);
         } else {
-            echo json_encode(["success" => false, "error" => "Database error occurred. Please contact support."]);
+            echo json_encode(["success" => false, "error" => $conn->error]);
         }
         $stmt->close();
     }

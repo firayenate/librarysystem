@@ -76,40 +76,63 @@ if(!isset($_SESSION['adminLoggedIn'])) {
                 <button onclick="searchBook('Home')">Search</button>
             </div>
         </div>
+
         <div class="dashboard">
             <h2>DashBoard Cards</h2>
-            <div class="dashboard-card">
+            <div class="dashboard-card" onclick="window.location.hash = '#bookedit'; setTimeout(() => { document.getElementById('fullLibraryCatalog').scrollIntoView({ behavior: 'smooth' }); }, 150);">
                 <i class="fa-solid fa-book"></i>
                 <h4>Total Books<br><span id="totalBooksCount">0 Item</span></h4>
             </div>
-            <div class="dashboard-card">
+            <div class="dashboard-card" onclick="window.location.hash = '#useredit'; setTimeout(() => { document.getElementById('registeredStudentsHeader').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);">
                 <i class="fa-solid fa-user-graduate"></i>
                 <h4>Total Students<br><span id="totalStudentsCount">0 Item</span></h4>
             </div>
-            <div class="dashboard-card">
+            <div class="dashboard-card" onclick="window.location.hash = '#bookedit'">
                 <i class="fa-solid fa-book-open-reader"></i>
                 <h4>Issued Books<br><span id="issuedBooksCount">0 Item</span></h4>
             </div>
-            <div class="dashboard-card">
+            <div class="dashboard-card" onclick="window.location.hash = '#bookedit'; setTimeout(openReturnBookForm, 100);">
                 <i class="fa-solid fa-hourglass-half"></i>
                 <h4>Pending Returns<br><span id="pendingReturnsCount">0 Item</span></h4>
             </div>
         </div>
 
-        <div class="activity">
-            <h2>Recent Activity</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Borrower ID</th>
-                        <th>Book Title</th>
-                        <th>Borrowed Date</th>
-                        <th>Return Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="recentActivityBody"></tbody>
-            </table>
+        <!-- Books By Subject Breakdown -->
+        <div class="category-breakdown" style="padding: 20px; text-align: center; margin-top: 10px;">
+            <h3 style="color: #f0a500; margin-bottom: 15px; font-family: 'Syne', sans-serif;"><i class="fa-solid fa-tags"></i> Books by Subject</h3>
+            <div id="categoryBreakdownContainer" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <!-- JS will populate category pills here -->
+            </div>
+        </div>
+
+        <!-- Library Books Showcase Grid -->
+        <div class="activity catalog-section" style="background: rgba(15, 23, 42, 0.4); border-radius: 20px; padding: 30px; margin-top: 30px; margin-bottom: 30px;">
+            <div class="catalog-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                <h2 style="color: #f8fafc; margin:0;"><i class="fa-solid fa-book-open" style="color: #f0a500;"></i> Library Book Directory</h2>
+                <button id="clearHomeSearchBtn" onclick="clearHomeSearch()" style="display:none; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); color:#f87171; padding:6px 12px; font-size:12px; border-radius:6px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-xmark"></i> Clear Search</button>
+            </div>
+            <div class="resource-cards" id="homeBookGrid">
+                <!-- Live database books will be rendered here -->
+            </div>
+        </div>
+
+        <div class="activity catalog-section" style="background: rgba(15, 23, 42, 0.4); border-radius: 20px; padding: 30px;">
+            <h2 style="margin-bottom: 20px; color: #f8fafc;"><i class="fa-solid fa-clock-rotate-left" style="color: #f0a500;"></i> Live Borrowing Info</h2>
+            <div class="table-container">
+                <table class="borrower-table premium-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Book Title</th>
+                            <th>Borrow Date</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentActivityBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -171,29 +194,33 @@ if(!isset($_SESSION['adminLoggedIn'])) {
                         class="fa-solid fa-rotate-left"></i> Return Book</button>
             </div>
 
-            <div class="table-container">
-                <table class="borrower-table">
+            <!-- Borrower Table -->
+            <div class="table-container" style="margin-top: 20px; overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 10px; color: #333;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
                     <thead>
-                        <tr>
-                            <th>Borrower ID</th>
-                            <th>Full Name</th>
-                            <th>Batch</th>
-                            <th>Contact (Email)</th>
-                            <th>Status</th>
-                            <th>Books Issued</th>
-                            <th>Actions</th>
+                        <tr style="border-bottom: 2px solid #eee;">
+                            <th style="padding: 12px;">Student ID</th>
+                            <th style="padding: 12px;">Name</th>
+                            <th style="padding: 12px;">Year</th>
+                            <th style="padding: 12px;">Email</th>
+                            <th style="padding: 12px;">Status</th>
+                            <th style="padding: 12px;">Book Title</th>
+                            <th style="padding: 12px;">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="borrowerTableBody"></tbody>
+                    <tbody id="borrowerTableBody">
+                        <!-- JS will populate -->
+                    </tbody>
                 </table>
             </div>
 
-            <!-- Dynamic Admin Catalog Grid -->
-            <div style="margin-top: 40px;">
-                <div class="searchinfo" style="margin-bottom: 20px;">
+            </div>
+
+            <div class="catalog-section" id="fullLibraryCatalog">
+                <div class="catalog-header">
                     <h3><i class="fa-solid fa-book-open"></i> Full Library Catalog</h3>
                 </div>
-                <div class="resource-cards" id="adminBookGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px;">
+                <div class="resource-cards" id="adminBookGrid">
                     <!-- JS will populate -->
                 </div>
             </div>
@@ -205,6 +232,8 @@ if(!isset($_SESSION['adminLoggedIn'])) {
             <button type="button" class="modal-close" onclick="closeAddBookForm()">&times;</button>
             <h2>Add New Book</h2>
             <form id="addBookForm" onsubmit="saveNewBook(event)">
+
+
                 <div class="book-upload-box">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <label for="bookFile">Choose Book File</label>
@@ -292,7 +321,7 @@ if(!isset($_SESSION['adminLoggedIn'])) {
 
     <!-- USER EDIT -->
     <div class="userEdit" id="useredit">
-        <div class="userinffo">
+        <div class="userinffo" id="registeredStudentsHeader">
             <h1>Registered Students</h1>
             <p>Select a student from the list, then update their information</p>
         </div>
@@ -329,7 +358,7 @@ if(!isset($_SESSION['adminLoggedIn'])) {
                         <input type="text" id="editStudentId" placeholder="Student ID" required>
                         <input type="text" id="editStudentName" placeholder="Full Name" required>
                         <input type="email" id="editStudentEmail" placeholder="Email" required>
-                        <input type="text" id="editStudentPhone" placeholder="Phone Number" required>
+                        <input type="text" id="editStudentPhone" placeholder="Phone Number">
                         <input type="text" id="editStudentDepartment" placeholder="Department" required>
                         <select id="editStudentYear" required>
                             <option value="">Select Year</option>
@@ -343,6 +372,26 @@ if(!isset($_SESSION['adminLoggedIn'])) {
                             <option value="Pending">Pending</option>
                             <option value="Blocked">Blocked</option>
                         </select>
+
+                        <!-- ===== Password Reset Section ===== -->
+                        <div class="password-section-divider">
+                            <span>Reset Password <span class="optional-tag">(optional)</span></span>
+                        </div>
+                        <div class="password-input-wrap">
+                            <input type="password" id="editStudentPassword" placeholder="New Password (leave blank to keep current)" autocomplete="new-password">
+                            <button type="button" class="eye-toggle" onclick="togglePwdVisibility('editStudentPassword', this)" title="Show/hide password">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-input-wrap">
+                            <input type="password" id="editStudentPasswordConfirm" placeholder="Confirm New Password" autocomplete="new-password">
+                            <button type="button" class="eye-toggle" onclick="togglePwdVisibility('editStudentPasswordConfirm', this)" title="Show/hide password">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <p id="pwdMatchMsg" class="pwd-match-msg" style="display:none;"></p>
+                        <!-- ===================================== -->
+
                         <div class="buttons student-buttons">
                             <button class="save" type="submit">Update Student</button>
                             <button class="cancel" type="button" onclick="clearStudentForm()">Cancel</button>
@@ -375,16 +424,16 @@ if(!isset($_SESSION['adminLoggedIn'])) {
                 <p>Explore and access a wide range of learning materials</p>
                 <div class="resource-search">
                     <div class="search-inner">
-                        <select>
+                        <select id="resourceTypeSelect" onchange="searchResources()">
                             <option>All Resources</option>
                             <option>E-Books</option>
                             <option>Lecture Notes</option>
                             <option>Past Exams</option>
-                            <option>Tutorials</option>
+                            <option>Physical Book</option>
                         </select>
-                        <input type="text" placeholder="Search resources, e.g., Python, Database, etc." />
+                        <input type="text" id="resourceSearchInput" placeholder="Search resources, e.g., Python, Database, etc." oninput="searchResources()" />
                         <i class="fa fa-search search-icon"></i>
-                        <button>Search</button>
+                        <button onclick="searchResources()">Search</button>
                     </div>
                 </div>
             </div>
@@ -403,53 +452,53 @@ if(!isset($_SESSION['adminLoggedIn'])) {
             </div>
 
             <div class="res-categories">
-                <div class="res-cat-card">
+                <div class="res-cat-card" onclick="filterResourcesByCat('E-Books')" style="cursor:pointer;">
                     <div class="res-cat-icon green-icon"><i class="fa-solid fa-book-open"></i></div>
                     <div class="res-cat-info">
                         <h4>E-Books</h4>
                         <p>Access a wide collection of digital books</p>
-                        <span class="res-count green-count">120 Items</span>
+                        <span class="res-count green-count" id="countEBooks">— Items</span>
                     </div>
-                    <a href="#" class="res-explore-btn green-explore">Explore <i class="fa fa-chevron-right"></i></a>
+                    <a href="javascript:void(0)" onclick="filterResourcesByCat('E-Books')" class="res-explore-btn green-explore">Explore <i class="fa fa-chevron-right"></i></a>
                 </div>
 
-                <div class="res-cat-card">
+                <div class="res-cat-card" onclick="filterResourcesByCat('Lecture Notes')" style="cursor:pointer;">
                     <div class="res-cat-icon orange-icon"><i class="fa-solid fa-file-lines"></i></div>
                     <div class="res-cat-info">
                         <h4>Lecture Notes</h4>
                         <p>Download lecture notes and study materials</p>
-                        <span class="res-count orange-count">85 Items</span>
+                        <span class="res-count orange-count" id="countLectureNotes">— Items</span>
                     </div>
-                    <a href="#" class="res-explore-btn orange-explore">Explore <i class="fa fa-chevron-right"></i></a>
+                    <a href="javascript:void(0)" onclick="filterResourcesByCat('Lecture Notes')" class="res-explore-btn orange-explore">Explore <i class="fa fa-chevron-right"></i></a>
                 </div>
 
-                <div class="res-cat-card">
+                <div class="res-cat-card" onclick="filterResourcesByCat('Past Exams')" style="cursor:pointer;">
                     <div class="res-cat-icon blue-icon"><i class="fa-solid fa-clipboard-check"></i></div>
                     <div class="res-cat-info">
                         <h4>Past Exams</h4>
                         <p>Practice with past exam papers and solutions</p>
-                        <span class="res-count blue-count">64 Items</span>
+                        <span class="res-count blue-count" id="countPastExams">— Items</span>
                     </div>
-                    <a href="#" class="res-explore-btn blue-explore">Explore <i class="fa fa-chevron-right"></i></a>
+                    <a href="javascript:void(0)" onclick="filterResourcesByCat('Past Exams')" class="res-explore-btn blue-explore">Explore <i class="fa fa-chevron-right"></i></a>
                 </div>
 
-                <div class="res-cat-card">
-                    <div class="res-cat-icon purple-icon"><i class="fa-solid fa-video"></i></div>
+                <div class="res-cat-card" onclick="filterResourcesByCat('Physical Book')" style="cursor:pointer;">
+                    <div class="res-cat-icon purple-icon"><i class="fa-solid fa-book"></i></div>
                     <div class="res-cat-info">
-                        <h4>Tutorials</h4>
-                        <p>Watch videos and learn new concepts</p>
-                        <span class="res-count purple-count">42 Items</span>
+                        <h4>Physical Books</h4>
+                        <p>Browse all cataloged physical library books</p>
+                        <span class="res-count purple-count" id="countPhysicalBooks">— Items</span>
                     </div>
-                    <a href="#" class="res-explore-btn purple-explore">Explore <i class="fa fa-chevron-right"></i></a>
+                    <a href="javascript:void(0)" onclick="filterResourcesByCat('Physical Book')" class="res-explore-btn purple-explore">Explore <i class="fa fa-chevron-right"></i></a>
                 </div>
             </div>
 
             <div class="res-section-header" style="margin-top: 30px;">
                 <div>
-                    <h3 class="res-section-title">Recently Added Resources</h3>
+                    <h3 class="res-section-title" id="resourceGridTitle">All Resources</h3>
                     <div class="res-underline"></div>
                 </div>
-                <a href="#" class="view-all-btn"><i class="fa-solid fa-border-all"></i> View All Resources</a>
+                <button onclick="fetchAdminResources()" class="view-all-btn" style="cursor:pointer; background:white; border:1px solid #ccc;"><i class="fa-solid fa-rotate-right"></i> Show All</button>
             </div>
 
             <div class="res-recent" id="adminResourceGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px;">
@@ -517,844 +566,51 @@ if(!isset($_SESSION['adminLoggedIn'])) {
     </div>
 
     <!-- ===== JAVASCRIPT ===== -->
-    <script>
-        function goToLogin() { window.location.href = "../logout.php"; }
 
-        function changeAdminProfileImage(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function () {
-                document.getElementById('navAdminImg').src = reader.result;
-                document.getElementById('adminProfilePreview').src = reader.result;
-                localStorage.setItem('adminProfileImage', reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        let registeredStudents = JSON.parse(localStorage.getItem('registeredStudents')) || [
-            {
-                id: 'NSR/0324/16',
-                name: 'Sara J.',
-                email: 'sara.j@example.com',
-                phone: '0912345678',
-                department: 'Computer Science',
-                year: 'Year 1',
-                status: 'Pending',
-                borrowed: 2,
-                returned: 4,
-                pending: 1
-            },
-            {
-                id: 'NSR/0451/16',
-                name: 'David L.',
-                email: 'david.l@example.com',
-                phone: '0923456789',
-                department: 'Information Technology',
-                year: 'Year 2',
-                status: 'Active',
-                borrowed: 0,
-                returned: 10,
-                pending: 0
-            },
-            {
-                id: 'NSR/0198/16',
-                name: 'Marta A.',
-                email: 'marta.a@example.com',
-                phone: '0934567890',
-                department: 'Software Engineering',
-                year: 'Year 3',
-                status: 'Active',
-                borrowed: 3,
-                returned: 7,
-                pending: 2
-            }
-        ];
-
-        function saveRegisteredStudents() {
-            localStorage.setItem('registeredStudents', JSON.stringify(registeredStudents));
-        }
-
-        function renderRegisteredStudents() {
-            const body = document.getElementById('registeredStudentBody');
-            if (!body) return;
-
-            const query = document.getElementById('studentSearchInput').value.toLowerCase();
-            const filtered = registeredStudents
-                .map((student, index) => ({ student, index }))
-                .filter(({ student }) => {
-                    return student.id.toLowerCase().includes(query) ||
-                        student.name.toLowerCase().includes(query) ||
-                        student.email.toLowerCase().includes(query) ||
-                        student.department.toLowerCase().includes(query);
-                });
-
-            if (!filtered.length) {
-                body.innerHTML = '<tr><td colspan="6">No registered students found.</td></tr>';
-                return;
-            }
-
-            body.innerHTML = filtered.map(({ student, index }) => `
-        <tr>
-            <td>${student.id}</td>
-            <td>${student.name}</td>
-            <td>${student.department}</td>
-            <td>${student.year}</td>
-            <td>${student.email}</td>
-            <td><button class="edit-btn" type="button" onclick="selectStudent(${index})">Edit</button></td>
-        </tr>
-    `).join('');
-        }
-
-        function selectStudent(index) {
-            const student = registeredStudents[index];
-            document.getElementById('selectedStudentIndex').value = index;
-            document.getElementById('editStudentId').value = student.id;
-            document.getElementById('editStudentName').value = student.name;
-            document.getElementById('editStudentEmail').value = student.email;
-            document.getElementById('editStudentPhone').value = student.phone;
-            document.getElementById('editStudentDepartment').value = student.department;
-            document.getElementById('editStudentYear').value = student.year;
-            document.getElementById('editStudentStatus').value = student.status;
-            document.getElementById('selectedStudentHint').textContent = 'Editing: ' + student.id;
-            document.getElementById('studentBooksBorrowed').textContent = 'Books Borrowed: ' + student.borrowed;
-            document.getElementById('studentBooksReturned').textContent = 'Books Returned: ' + student.returned;
-            document.getElementById('studentPendingBooks').textContent = 'Pending: ' + student.pending;
-        }
-
-        function saveStudentInfo(event) {
-            event.preventDefault();
-
-            const index = document.getElementById('selectedStudentIndex').value;
-            if (index === '') {
-                alert('Please select a student first.');
-                return;
-            }
-
-            registeredStudents[index] = {
-                ...registeredStudents[index],
-                id: document.getElementById('editStudentId').value.trim(),
-                name: document.getElementById('editStudentName').value.trim(),
-                email: document.getElementById('editStudentEmail').value.trim(),
-                phone: document.getElementById('editStudentPhone').value.trim(),
-                department: document.getElementById('editStudentDepartment').value.trim(),
-                year: document.getElementById('editStudentYear').value,
-                status: document.getElementById('editStudentStatus').value
-            };
-
-            saveRegisteredStudents();
-            renderRegisteredStudents();
-            selectStudent(Number(index));
-            alert('Student information updated.');
-        }
-
-        function clearStudentForm() {
-            document.getElementById('studentEditForm').reset();
-            document.getElementById('selectedStudentIndex').value = '';
-            document.getElementById('selectedStudentHint').textContent = 'Choose a student from the table first.';
-            document.getElementById('studentBooksBorrowed').textContent = 'Books Borrowed: -';
-            document.getElementById('studentBooksReturned').textContent = 'Books Returned: -';
-            document.getElementById('studentPendingBooks').textContent = 'Pending: -';
-        }
-
-        function deleteSelectedStudent() {
-            const index = document.getElementById('selectedStudentIndex').value;
-            if (index === '') {
-                alert('Please select a student first.');
-                return;
-            }
-
-            const student = registeredStudents[index];
-            if (!confirm('Delete student ' + student.id + '?')) return;
-
-            registeredStudents.splice(index, 1);
-            saveRegisteredStudents();
-            clearStudentForm();
-            renderRegisteredStudents();
-        }
-
-        function loadAdminProfile() {
-            const adminId = localStorage.getItem('adminId') || 'ADM1234';
-            const adminImage = localStorage.getItem('adminProfileImage');
-
-            document.getElementById('navAdminId').textContent = adminId;
-
-            if (adminImage) {
-                document.getElementById('navAdminImg').src = adminImage;
-            }
-        }
-
-        function toggleMenu() {
-            const mainNav = document.getElementById('mainNav');
-            mainNav.classList.toggle('open');
-            const hamburger = document.getElementById('hamburger');
-            hamburger.classList.toggle('active');
-        }
-
-        function closeMenu() {
-            document.getElementById('mainNav').classList.remove('open');
-            document.getElementById('hamburger').classList.remove('active');
-        }
-
-        function searchBook(area) {
-            const type = document.getElementById('searchType' + area).value;
-            const query = document.getElementById('searchInput' + area).value.trim();
-            if (!query) return alert('Please enter a search term.');
-            alert('Searching by ' + type + ': "' + query + '"');
-        }
-
-        function searchBorrower() {
-            const type = document.getElementById('searchTypeBorrower').value;
-            const query = document.getElementById('searchInputBorrower').value.trim();
-            if (!query) return alert('Please enter a search term.');
-            alert('Searching borrower by ' + type + ': "' + query + '"');
-        }
-
-        const faqData = [
-            { q: "How do I add a new book to the library?", a: "Go to Manage Books, click Add New Book. Fill in the title, author, ISBN, subject, and copies, then submit.", cat: "books" },
-            { q: "How do I delete a book from the system?", a: "In the Manage Books table, find the book and click Delete. You cannot delete a book currently borrowed.", cat: "books" },
-            { q: "How do I edit book information?", a: "Click Edit next to the book in the Manage Books table. Update the fields and click Save.", cat: "books" },
-            { q: "How do I search for a specific book?", a: "Use the search bar in Manage Books. Select Title, Author, or Subject, enter your keyword and click Search.", cat: "books" },
-            { q: "How do I filter books by status or batch?", a: "Use the Status and Batch dropdowns in Manage Books to narrow down the table.", cat: "books" },
-            { q: "How do I view all registered students?", a: "The full student list is in the borrower table under Manage Books. Filter by batch or status to find specific students.", cat: "users" },
-            { q: "How do I edit a student's information?", a: "Find the student in Manage Books and click Edit. Update their details and save.", cat: "users" },
-            { q: "How do I delete a student account?", a: "Click Delete next to the student. This permanently removes the record. Ensure all books are returned first.", cat: "users" },
-            { q: "How do I update admin profile info?", a: "Go to Edit User Info from the nav bar. Update your name, email, phone, department, and password.", cat: "users" },
-            { q: "How do I change the admin password?", a: "In Edit User Info, go to Security Settings. Enter your current password, new password, confirm it and save.", cat: "users" },
-            { q: "How do I issue a book to a student?", a: "In Manage Books, click Issue/Borrow Book. Enter the student ID, name, select the book and batch, then submit.", cat: "borrowing" },
-            { q: "How do I mark a book as returned?", a: "Find the borrower in Manage Books, click Edit, change status to Returned and save.", cat: "borrowing" },
-            { q: "How do I identify overdue books?", a: "Use the Status filter and select Overdue. Contact the student using the email shown in the table.", cat: "borrowing" },
-            { q: "What is the default borrowing period?", a: "7 days from the issue date. After that the status automatically changes to Overdue.", cat: "borrowing" },
-            { q: "Can a student borrow more than one book?", a: "Yes, up to 5 books at a time. The Books Issued column shows how many they currently have.", cat: "borrowing" },
-            { q: "How do I log out of the admin panel?", a: "Click the Log Out button in the top right of the navigation bar.", cat: "system" },
-            { q: "How do the dashboard cards update?", a: "They update automatically based on data stored in the system.", cat: "system" },
-            { q: "How do I access the Resources section?", a: "Click Resources in the nav bar to manage E-Books, Lecture Notes, Past Exams, and Tutorials.", cat: "system" },
-            { q: "What if the page is not loading correctly?", a: "Refresh with Ctrl+R or Cmd+R. If it persists, clear your browser cache or contact the developer.", cat: "system" },
-        ];
-
-        let activeTab = 'all';
-
-        let dashboardStats = JSON.parse(localStorage.getItem('dashboardStatsV2')) || {
-            totalBooks: 0,
-            totalStudents: 0,
-            issuedBooks: 0,
-            pendingReturns: 0
-        };
-
-        let libraryBooks = JSON.parse(localStorage.getItem('libraryBooks')) || [];
-        let borrowedBooks = JSON.parse(localStorage.getItem('borrowedBooks')) || [];
-        const RETURN_ROW_VISIBLE_TIME = 30000;
-
-        const sampleBorrowerRows = [
-            {
-                borrowerId: '#NSR/0324/16',
-                borrowerName: 'Sara J.',
-                batch: 'Year 1',
-                email: 'sara.j@example.com',
-                status: 'Pending',
-                booksIssued: 2
-            },
-            {
-                borrowerId: '#NSR/0451/16',
-                borrowerName: 'David L.',
-                batch: 'Year 2',
-                email: 'david.l@example.com',
-                status: 'Active',
-                booksIssued: 0
-            }
-        ];
-
-        function saveDashboardStats() {
-            localStorage.setItem('dashboardStatsV2', JSON.stringify(dashboardStats));
-        }
-
-        function renderDashboardStats() {
-            document.getElementById('totalBooksCount').textContent = formatItemCount(dashboardStats.totalBooks);
-            document.getElementById('totalStudentsCount').textContent = formatItemCount(dashboardStats.totalStudents);
-            document.getElementById('issuedBooksCount').textContent = formatItemCount(dashboardStats.issuedBooks);
-            document.getElementById('pendingReturnsCount').textContent = formatItemCount(dashboardStats.pendingReturns);
-        }
-
-        function formatItemCount(count) {
-            return count + (count === 1 ? ' Item' : ' Items');
-        }
-
-        function openAddBookForm() {
-            document.getElementById('addBookModal').classList.add('open');
-        }
-
-        function closeAddBookForm() {
-            document.getElementById('addBookModal').classList.remove('open');
-            document.getElementById('addBookForm').reset();
-            document.getElementById('selectedBookFileName').textContent = 'No file selected';
-        }
-
-        function showSelectedBookFile() {
-            const file = document.getElementById('bookFile').files[0];
-            document.getElementById('selectedBookFileName').textContent = file ? file.name : 'No file selected';
-        }
-
-        function getVisibleBorrowedBooks() {
-            const now = Date.now();
-            const visibleBooks = borrowedBooks.filter(book => {
-                return book.status !== 'Returned' || !book.returnedAt || now - book.returnedAt < RETURN_ROW_VISIBLE_TIME;
-            });
-
-            if (visibleBooks.length !== borrowedBooks.length) {
-                borrowedBooks = visibleBooks;
-                localStorage.setItem('borrowedBooks', JSON.stringify(borrowedBooks));
-            }
-
-            return visibleBooks;
-        }
-
-        function renderBorrowerTable() {
-            const body = document.getElementById('borrowerTableBody');
-            if (!body) return;
-
-            const borrowedRows = getVisibleBorrowedBooks().map((book, index) => ({
-                borrowerId: book.borrowerId,
-                borrowerName: book.borrowerName,
-                batch: book.batch || 'Not selected',
-                email: book.email || '-',
-                status: book.status,
-                booksIssued: book.status === 'Pending' ? 1 : 0,
-                borrowedIndex: index
-            }));
-
-            const rows = [...sampleBorrowerRows, ...borrowedRows];
-
-            body.innerHTML = rows.map(row => {
-                const badgeClass = row.status === 'Pending' ? 'pending' : row.status === 'Returned' ? 'returned' : 'active';
-                const actions = row.borrowedIndex !== undefined
-                    ? `<button class="info-btn" type="button" onclick="showBorrowerInfo(${row.borrowedIndex})">Info</button>`
-                    : `<button class="info-btn" type="button" onclick="showSampleBorrowerInfo('${row.borrowerId}')">Info</button>`;
-
-                return `
-            <tr>
-                <td>${row.borrowerId}</td>
-                <td><strong>${row.borrowerName}</strong></td>
-                <td>${row.batch}</td>
-                <td>${row.email}</td>
-                <td><span class="badge ${badgeClass}">${row.status}</span></td>
-                <td>${row.booksIssued}</td>
-                <td>${actions}</td>
-            </tr>
-        `;
-            }).join('');
-        }
-
-        function removeBorrowerRow(index) {
-            const removedBook = borrowedBooks[index];
-            if (!removedBook) return;
-
-            if (!confirm('Delete this borrowed book record?')) return;
-
-            borrowedBooks.splice(index, 1);
-            localStorage.setItem('borrowedBooks', JSON.stringify(borrowedBooks));
-
-            if (removedBook.status === 'Pending') {
-                returnBookToDashboard();
-            }
-
-            renderBorrowerTable();
-            renderRecentActivity();
-            renderReturnRequests();
-        }
-
-        function showBorrowerInfo(index) {
-            const activityIndex = getAllRecentActivities().findIndex(activity => {
-                return activity.source === 'borrowedBooks' && activity.borrowerId === borrowedBooks[index].borrowerId && activity.bookId === borrowedBooks[index].bookId;
-            });
-
-            if (activityIndex >= 0) {
-                showActivityDetails(activityIndex);
-            }
-        }
-
-        function showSampleBorrowerInfo(borrowerId) {
-            const cleanId = borrowerId.replace('#', '');
-            const activityIndex = getAllRecentActivities().findIndex(activity => activity.borrowerId === cleanId);
-
-            if (activityIndex >= 0) {
-                showActivityDetails(activityIndex);
-            } else {
-                alert('No detailed information found for this sample row.');
-            }
-        }
-
-        function saveNewBook(event) {
-            event.preventDefault();
-
-            const file = document.getElementById('bookFile').files[0];
-            const copies = Number(document.getElementById('bookCopies').value) || 1;
-            const book = {
-                id: Date.now(), // needed for resources mapping
-                title: document.getElementById('bookTitle').value.trim(),
-                author: document.getElementById('bookAuthor').value.trim(),
-                subject: document.getElementById('bookSubject').value.trim(),
-                isbn: document.getElementById('bookIsbn').value.trim(),
-                category: document.getElementById('bookCategory').value,
-                status: 'Available', // needed for resources mapping
-                copies: copies,
-                description: document.getElementById('bookDescription').value.trim(),
-                fileName: file ? file.name : 'No file attached',
-                addedAt: new Date().toLocaleString()
-            };
-
-            libraryBooks.push(book);
-            localStorage.setItem('libraryBooks', JSON.stringify(libraryBooks));
-            dashboardStats.totalBooks += copies;
-            saveDashboardStats();
-            renderDashboardStats();
-            closeAddBookForm();
-            if(typeof renderAdminResources === 'function') renderAdminResources();
-            alert('Book added successfully.');
-        }
-
-        function renderAdminResources() {
-            const grid = document.getElementById('adminResourceGrid');
-            if (!grid) return;
-            
-            // Real resources from the user side
-            const resources = [
-                // DAA Category
-                { id: 1, title: 'Introduction to DAA', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '327 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/1 Intoduction (2).ppt', module: 'DAA' },
-                { id: 2, title: 'Analysis of Algorithms', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '624 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/2 Analysis of algorithm (2).ppt', module: 'DAA' },
-                { id: 3, title: 'Graph Theory', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '438 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/3 Graph.ppt', module: 'DAA' },
-                { id: 4, title: 'Divide & Conquer', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '335 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/4 Divide Conquer.ppt', module: 'DAA' },
-                { id: 5, title: 'Greedy Algorithms', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '175 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/5 Greedy.ppt', module: 'DAA' },
-                { id: 6, title: 'Dynamic Programming', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '225 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/6 Dynamic programming.ppt', module: 'DAA' },
-                { id: 7, title: 'Backtracking', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '209 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/7 BackTrack.ppt', module: 'DAA' },
-                
-                // Web Category
-                { id: 8, title: 'Web Development Ch 1', author: 'Web Dept', type: 'Study Material', format: 'PPTX', size: '915 KB', icon: 'fa-file-powerpoint', path: 'files/web/Chapter 1.pptx', module: 'Web Development' },
-                { id: 9, title: 'HTML Essentials', author: 'Web Dept', type: 'Study Material', format: 'PPTX', size: '745 KB', icon: 'fa-file-powerpoint', path: 'files/web/Ch 2 HTML.pptx', module: 'Web Development' },
-                { id: 10, title: 'CSS Styling', author: 'Web Dept', type: 'Study Material', format: 'PPTX', size: '877 KB', icon: 'fa-file-powerpoint', path: 'files/web/Ch 3 CSS.pptx', module: 'Web Development' },
-                { id: 11, title: 'JavaScript Logic', author: 'Web Dept', type: 'Study Material', format: 'PPT', size: '5.3 MB', icon: 'fa-file-powerpoint', path: 'files/web/Ch 4 JavaScript.ppt', module: 'Web Development' },
-                { id: 12, title: 'Web Development Ch 5', author: 'Web Dept', type: 'Study Material', format: 'PPT', size: '1.8 MB', icon: 'fa-file-powerpoint', path: 'files/web/Chapter Five (2).ppt', module: 'Web Development' },
-                { id: 13, title: 'Web Development Ch 6', author: 'Web Dept', type: 'Study Material', format: 'PPTX', size: '1.9 MB', icon: 'fa-file-powerpoint', path: 'files/web/Chapter 6 (2).pptx', module: 'Web Development' },
-                { id: 14, title: 'Course Outline', author: 'Library Admin', type: 'E-Book', format: 'PDF', size: '185 KB', icon: 'fa-file-pdf', path: 'files/web/Course Outline.pdf', module: 'Web Development' },
-                
-                // Graphics Category
-                { id: 15, title: 'Computer Graphics Ch 1', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '560 KB', icon: 'fa-file-powerpoint', path: 'files/graphics/chap1 (9).ppt', module: 'Computer Graphics' },
-                { id: 16, title: 'Computer Graphics Ch 2', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '363 KB', icon: 'fa-file-powerpoint', path: 'files/graphics/chap2 (9).ppt', module: 'Computer Graphics' },
-                { id: 17, title: 'Computer Graphics Ch 3', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '571 KB', icon: 'fa-file-powerpoint', path: 'files/graphics/chap3 (6).ppt', module: 'Computer Graphics' },
-                { id: 18, title: 'Computer Graphics Ch 4', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '550 KB', icon: 'fa-file-powerpoint', path: 'files/graphics/chap4 (5).ppt', module: 'Computer Graphics' },
-                { id: 19, title: 'Computer Graphics Ch 6', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '454 KB', icon: 'fa-file-powerpoint', path: 'files/graphics/chap 6 (2).ppt', module: 'Computer Graphics' },
-                { id: 20, title: 'OpenGL Programming Guide', author: 'Khronos Group', type: 'E-Book', format: 'PDF', size: '35.4 MB', icon: 'fa-file-pdf', path: 'files/graphics/opengl book (2).pdf', module: 'Computer Graphics' },
-                { id: 21, title: 'Computer Graphics Tutorials', author: 'YouTube Series', type: 'Video', format: 'Video', size: 'Playlist', icon: 'fa-circle-play', path: 'https://www.youtube.com/watch?v=Jv52kWUUCng&list=PLzfVsIhtvVY2dCi7RK4VGhSbrFHzSPz6A&index=23', module: 'Computer Graphics' },
-                { id: 22, title: 'Visual Studio Community', author: 'Microsoft', type: 'Software', format: 'ZIP', size: '1.2 MB', icon: 'fa-file-zipper', path: 'files/graphics/visual-studio-community-16-8-30907 (2).zip', module: 'Computer Graphics' }
-            ];
-
-            // Map physical books from localStorage to look like resources
-            let currentBooks = JSON.parse(localStorage.getItem('libraryBooks')) || [];
-            let mappedBooks = currentBooks.map(b => ({
-                id: b.id || Math.random(),
-                title: b.title,
-                author: b.author,
-                type: 'Physical Book',
-                format: 'Book',
-                size: b.status || 'Available',
-                icon: 'fa-book',
-                path: null,
-                module: b.category,
-                isCatalogBook: true,
-                status: b.status || 'Available'
-            }));
-
-            let combinedResources = [...mappedBooks, ...resources];
-
-            grid.innerHTML = combinedResources.map(res => `
-                <div class="resource-card">
-                    <div class="resource-cover">
-                        <span class="resource-tag">${res.type || res.module}</span>
-                        <div class="cover-placeholder" style="cursor:pointer;" onclick="${res.path ? \`window.open('\${res.path}', '_blank')\` : \`alert('Viewing \${res.title}')\`}">
-                            <i class="fa-solid ${res.icon || 'fa-file'}"></i>
-                        </div>
+    <!-- Resource Upload Modal -->
+    <div id="resourceUploadModal" class="book-modal">
+        <div class="book-modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="margin:0;">Upload Digital Resource</h2>
+                <button onclick="closeResourceUploader()" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+            </div>
+            <form id="resourceUploadForm" onsubmit="saveNewResource(event)">
+                <div class="book-upload-box">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <p>Select a file to upload (PDF, PPT, MP4)</p>
+                    <label for="resFile">Browse Files</label>
+                    <input type="file" id="resFile">
+                </div>
+                <div class="book-form-grid">
+                    <div class="search-group">
+                        <label>Resource Title</label>
+                        <input type="text" id="resTitle" placeholder="e.g. Advanced Database Systems" required>
                     </div>
-                    <div class="resource-card-info">
-                        <h4>${res.title}</h4>
-                        <p class="resource-author">${res.author}</p>
-                        <p class="resource-meta">
-                            <i class="fa-solid ${res.isCatalogBook ? (res.status === 'Available' ? 'fa-circle-check' : 'fa-circle-xmark') : 'fa-file-lines'}"></i> 
-                            ${res.format} • ${res.size}
-                        </p>
-                        ${res.path ? \`<button class="resource-action-btn btn-view" onclick="window.open('\${res.path}', '_blank')">
-                            <i class="fa-solid fa-eye"></i> View File
-                        </button>\` : ''}
+                    <div class="search-group">
+                        <label>Category</label>
+                        <select id="resCategory">
+                            <option>E-Books</option>
+                            <option>Lecture Notes</option>
+                            <option>Past Exams</option>
+                            <option>Tutorials</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <label>Author / Dept</label>
+                        <input type="text" id="resAuthor" placeholder="e.g. Computer Science Dept" required>
+                    </div>
+                    <div class="search-group">
+                        <label>Module / Subject</label>
+                        <input type="text" id="resModule" placeholder="e.g. DBMS" required>
                     </div>
                 </div>
-            `).join('');
-        }
-
-        function openIssueBookForm() {
-            if (dashboardStats.totalBooks <= dashboardStats.issuedBooks) {
-                alert('No available books to issue. Add a book first.');
-                return;
-            }
-
-            document.getElementById('issueEditIndex').value = '';
-            document.getElementById('issueBookModal').classList.add('open');
-            const today = new Date();
-            const dueDate = new Date();
-            dueDate.setDate(today.getDate() + 7);
-            document.getElementById('issueBorrowDate').value = today.toISOString().slice(0, 10);
-            document.getElementById('issueDueDate').value = dueDate.toISOString().slice(0, 10);
-            document.getElementById('issueBorrowTime').value = today.toTimeString().slice(0, 5);
-        }
-
-        function closeIssueBookForm() {
-            document.getElementById('issueBookModal').classList.remove('open');
-            document.getElementById('issueBookForm').reset();
-            document.getElementById('issueEditIndex').value = '';
-        }
-
-        function editBorrowerRow(index) {
-            const book = borrowedBooks[index];
-            if (!book) return;
-
-            document.getElementById('issueEditIndex').value = index;
-            document.getElementById('issueStudentId').value = book.borrowerId;
-            document.getElementById('issueStudentName').value = book.borrowerName;
-            document.getElementById('issueStudentEmail').value = book.email || '';
-            document.getElementById('issueStudentPhone').value = book.phone || '';
-            document.getElementById('issueStudentBatch').value = book.batch || '';
-            document.getElementById('issueBookTitle').value = book.bookTitle;
-            document.getElementById('issueBookId').value = book.bookId;
-            document.getElementById('issueBorrowDate').value = book.borrowedDate;
-            document.getElementById('issueDueDate').value = book.dueDate;
-            document.getElementById('issueBorrowTime').value = book.borrowedTime;
-            document.getElementById('issueBookCondition').value = book.condition;
-            document.getElementById('issueNotes').value = book.notes || '';
-            document.getElementById('issueBookModal').classList.add('open');
-        }
-
-        function openReturnBookForm() {
-            renderReturnRequests();
-            document.getElementById('returnBookModal').classList.add('open');
-        }
-
-        function closeReturnBookForm() {
-            document.getElementById('returnBookModal').classList.remove('open');
-        }
-
-        function renderReturnRequests() {
-            const list = document.getElementById('returnRequestList');
-            const pendingBooks = borrowedBooks
-                .map((book, index) => ({ book, index }))
-                .filter(({ book }) => book.status === 'Pending');
-
-            if (!pendingBooks.length) {
-                list.innerHTML = '<div class="empty-return">No pending return requests right now.</div>';
-                return;
-            }
-
-            list.innerHTML = pendingBooks.map(({ book, index }) => `
-        <div class="return-request-card">
-            <div>
-                <h3>${book.bookTitle}</h3>
-                <p><strong>Student:</strong> ${book.borrowerName} (${book.borrowerId})</p>
-                <p><strong>Borrowed:</strong> ${book.borrowedDate} at ${book.borrowedTime}</p>
-                <p><strong>Due Date:</strong> ${book.dueDate}</p>
-                <p><strong>Condition Before:</strong> ${book.condition}</p>
-            </div>
-            <button type="button" onclick="acceptReturnRequest(${index})">Accept Return</button>
-        </div>
-    `).join('');
-        }
-
-        function acceptReturnRequest(index) {
-            const now = new Date();
-            borrowedBooks[index] = {
-                ...borrowedBooks[index],
-                status: 'Returned',
-                returnedDate: now.toISOString().slice(0, 10),
-                returnedTime: now.toTimeString().slice(0, 5),
-                returnedAt: now.getTime(),
-                penalty: 'No penalty',
-                penaltyAmount: '0 ETB'
-            };
-
-            localStorage.setItem('borrowedBooks', JSON.stringify(borrowedBooks));
-            returnBookToDashboard();
-            renderBorrowerTable();
-            renderRecentActivity();
-            renderReturnRequests();
-            alert('Return accepted.');
-        }
-
-        function saveIssuedBook(event) {
-            event.preventDefault();
-
-            const editIndex = document.getElementById('issueEditIndex').value;
-
-            if (editIndex === '' && dashboardStats.totalBooks <= dashboardStats.issuedBooks) {
-                alert('No available books to issue. Add a book first.');
-                return;
-            }
-
-            const issuedBook = {
-                borrowerId: document.getElementById('issueStudentId').value.trim(),
-                borrowerName: document.getElementById('issueStudentName').value.trim(),
-                email: document.getElementById('issueStudentEmail').value.trim(),
-                phone: document.getElementById('issueStudentPhone').value.trim(),
-                batch: document.getElementById('issueStudentBatch').value,
-                bookTitle: document.getElementById('issueBookTitle').value.trim(),
-                bookId: document.getElementById('issueBookId').value.trim(),
-                borrowedDate: document.getElementById('issueBorrowDate').value,
-                borrowedTime: document.getElementById('issueBorrowTime').value,
-                dueDate: document.getElementById('issueDueDate').value,
-                condition: document.getElementById('issueBookCondition').value,
-                notes: document.getElementById('issueNotes').value.trim(),
-                status: 'Pending',
-                handledBy: localStorage.getItem('adminId') || 'ADM1234'
-            };
-
-            if (editIndex === '') {
-                borrowedBooks.push(issuedBook);
-                dashboardStats.issuedBooks += 1;
-                dashboardStats.pendingReturns += 1;
-            } else {
-                borrowedBooks[Number(editIndex)] = {
-                    ...borrowedBooks[Number(editIndex)],
-                    ...issuedBook
-                };
-            }
-
-            localStorage.setItem('borrowedBooks', JSON.stringify(borrowedBooks));
-            saveDashboardStats();
-            renderDashboardStats();
-            renderRecentActivity();
-            renderBorrowerTable();
-            renderReturnRequests();
-            closeIssueBookForm();
-            alert(editIndex === '' ? 'Book issued successfully.' : 'Borrowed book record updated.');
-        }
-
-        function returnBookToDashboard() {
-            if (dashboardStats.issuedBooks > 0) {
-                dashboardStats.issuedBooks -= 1;
-            }
-
-            if (dashboardStats.pendingReturns > 0) {
-                dashboardStats.pendingReturns -= 1;
-            }
-
-            saveDashboardStats();
-            renderDashboardStats();
-        }
-
-        function markBorrowedBookReturned(index) {
-            const now = new Date();
-            borrowedBooks[index] = {
-                ...borrowedBooks[index],
-                status: 'Returned',
-                returnedDate: now.toISOString().slice(0, 10),
-                returnedTime: now.toTimeString().slice(0, 5),
-                returnedAt: now.getTime(),
-                penalty: 'No penalty',
-                penaltyAmount: '0 ETB'
-            };
-
-            localStorage.setItem('borrowedBooks', JSON.stringify(borrowedBooks));
-            returnBookToDashboard();
-            renderBorrowerTable();
-            renderRecentActivity();
-            showActivityDetails(index);
-            alert('Book marked as returned.');
-        }
-
-        const recentActivities = [
-            {
-                borrowerId: 'NSR/0324/16',
-                borrowerName: 'Sara J.',
-                department: 'Computer Science',
-                batch: 'Year 1',
-                email: 'sara.j@example.com',
-                phone: '0912345678',
-                bookTitle: 'Database System',
-                bookId: 'BOOK-DB-014',
-                author: 'Thomas Connolly',
-                borrowedDate: '2026-04-20',
-                borrowedTime: '09:30 AM',
-                dueDate: '2026-04-27',
-                returnedDate: '2026-04-27',
-                returnedTime: '02:15 PM',
-                status: 'Returned',
-                penalty: 'No penalty',
-                penaltyAmount: '0 ETB',
-                bookCondition: 'Good',
-                handledBy: 'ADM1234',
-                notes: 'Returned on the due date. Book condition checked and accepted.'
-            },
-            {
-                borrowerId: 'NSR/0451/16',
-                borrowerName: 'David L.',
-                department: 'Information Technology',
-                batch: 'Year 2',
-                email: 'david.l@example.com',
-                phone: '0923456789',
-                bookTitle: 'Java Programming',
-                bookId: 'BOOK-JAVA-021',
-                author: 'Herbert Schildt',
-                borrowedDate: '2026-04-22',
-                borrowedTime: '11:05 AM',
-                dueDate: '2026-04-29',
-                returnedDate: 'Not returned yet',
-                returnedTime: '-',
-                status: 'Pending',
-                penalty: 'No penalty yet',
-                penaltyAmount: '0 ETB',
-                bookCondition: 'Not checked',
-                handledBy: 'ADM1234',
-                notes: 'Book is still with the student. Follow up if it passes the due date.'
-            }
-        ];
-
-        function getAllRecentActivities() {
-            const issuedActivities = borrowedBooks.map(book => ({
-                source: 'borrowedBooks',
-                borrowerId: book.borrowerId,
-                borrowerName: book.borrowerName,
-                department: 'Not selected',
-                batch: 'Not selected',
-                email: book.email || '-',
-                phone: book.phone || '-',
-                bookTitle: book.bookTitle,
-                bookId: book.bookId,
-                author: 'Not entered',
-                borrowedDate: book.borrowedDate,
-                borrowedTime: book.borrowedTime,
-                dueDate: book.dueDate,
-                returnedDate: book.returnedDate || 'Not returned yet',
-                returnedTime: book.returnedTime || '-',
-                status: book.status,
-                penalty: book.penalty || 'No penalty yet',
-                penaltyAmount: book.penaltyAmount || '0 ETB',
-                bookCondition: book.condition,
-                handledBy: book.handledBy,
-                notes: book.notes || 'Book issued by admin and waiting for return.'
-            }));
-
-            const defaultActivities = recentActivities.map(activity => ({
-                ...activity,
-                source: 'default'
-            }));
-
-            return [...issuedActivities, ...defaultActivities];
-        }
-
-        function renderRecentActivity() {
-            const body = document.getElementById('recentActivityBody');
-            const allActivities = getAllRecentActivities();
-
-            body.innerHTML = allActivities.map((activity, index) => `
-        <tr onclick="showActivityDetails(${index})">
-            <td>${activity.borrowerId}</td>
-            <td>${activity.bookTitle}</td>
-            <td>${activity.borrowedDate}</td>
-            <td>${activity.returnedDate === 'Not returned yet' ? '-' : activity.returnedDate}</td>
-            <td class="color"><button type="button">${activity.status}</button></td>
-        </tr>
-    `).join('');
-        }
-
-        function showActivityDetails(index) {
-            const item = getAllRecentActivities()[index];
-            const adminId = localStorage.getItem('adminId') || item.handledBy;
-            const detailGrid = document.getElementById('activityDetailGrid');
-
-            detailGrid.innerHTML = `
-        <div><span>Borrower ID</span><strong>${item.borrowerId}</strong></div>
-        <div><span>Borrower Name</span><strong>${item.borrowerName}</strong></div>
-        <div><span>Department</span><strong>${item.department}</strong></div>
-        <div><span>Batch</span><strong>${item.batch}</strong></div>
-        <div><span>Email</span><strong>${item.email}</strong></div>
-        <div><span>Phone</span><strong>${item.phone}</strong></div>
-        <div><span>Book Title</span><strong>${item.bookTitle}</strong></div>
-        <div><span>Book ID</span><strong>${item.bookId}</strong></div>
-        <div><span>Author</span><strong>${item.author}</strong></div>
-        <div><span>Borrowed Date</span><strong>${item.borrowedDate}</strong></div>
-        <div><span>Borrowed Time</span><strong>${item.borrowedTime}</strong></div>
-        <div><span>Due Date</span><strong>${item.dueDate}</strong></div>
-        <div><span>Returned Date</span><strong>${item.returnedDate}</strong></div>
-        <div><span>Returned Time</span><strong>${item.returnedTime}</strong></div>
-        <div><span>Status</span><strong>${item.status}</strong></div>
-        <div><span>Penalty</span><strong>${item.penalty}</strong></div>
-        <div><span>Penalty Amount</span><strong>${item.penaltyAmount}</strong></div>
-        <div><span>Book Condition</span><strong>${item.bookCondition}</strong></div>
-        <div><span>Handled By</span><strong>${adminId}</strong></div>
-    `;
-
-            document.getElementById('activityNotes').textContent = item.notes;
-            document.getElementById('activityActions').innerHTML = item.source === 'borrowedBooks' && item.status === 'Pending'
-                ? `<button type="button" class="return-book-btn" onclick="markBorrowedBookReturned(${index})">Mark as Returned</button>`
-                : `<span class="return-status">No return action needed.</span>`;
-            document.getElementById('activityModal').classList.add('open');
-        }
-
-        function closeActivityDetails() {
-            document.getElementById('activityModal').classList.remove('open');
-        }
-
-        function setTab(cat, el) {
-            activeTab = cat;
-            document.querySelectorAll('.faq-tab').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-            renderFAQ();
-        }
-
-        function filterFAQ() { renderFAQ(); }
-
-        function toggleFAQ(i) {
-            document.querySelectorAll('.faq-item').forEach((item, idx) => {
-                if (idx === i) item.classList.toggle('open');
-                else item.classList.remove('open');
-            });
-        }
-
-        function renderFAQ() {
-            const query = document.getElementById('faqSearch').value.toLowerCase();
-            const list = document.getElementById('faqList');
-            const filtered = faqData.filter(f => {
-                const matchCat = activeTab === 'all' || f.cat === activeTab;
-                const matchQ = f.q.toLowerCase().includes(query) || f.a.toLowerCase().includes(query);
-                return matchCat && matchQ;
-            });
-            if (!filtered.length) {
-                list.innerHTML = '<div class="faq-empty">No results found. Try a different keyword or category.</div>';
-                return;
-            }
-            list.innerHTML = filtered.map((f, i) => `
-        <div class="faq-item">
-            <div class="faq-question" onclick="toggleFAQ(${i})">
-                <div class="faq-question-left">
-                    <span class="faq-badge ${f.cat}">${f.cat}</span>
-                    <span class="q-text">${f.q}</span>
+                <div class="book-form-actions">
+                    <button type="button" class="cancel" onclick="closeResourceUploader()">Cancel</button>
+                    <button type="submit" class="save">Upload Resource</button>
                 </div>
-                <span class="faq-toggle">+</span>
-            </div>
-            <div class="faq-answer">${f.a}</div>
+            </form>
         </div>
-    `).join('');
-        }
-
-        loadAdminProfile();
-        renderDashboardStats();
-        renderRecentActivity();
-        renderBorrowerTable();
-        renderRegisteredStudents();
-        renderFAQ();
-        
-        if (typeof renderAdminResources === 'function') renderAdminResources();
-        if (typeof renderAdminCatalog === 'function') renderAdminCatalog();
-        
-        setInterval(renderBorrowerTable, 5000);
-    </script>
-
-
+    </div>
 
     <!--Footer-->
     <div class="footer">
@@ -1376,11 +632,11 @@ if(!isset($_SESSION['adminLoggedIn'])) {
     </div>
     <script>
         function goToLogin() {
-            window.location.href = "login.html";
+            window.location.href = "../logout.php";
         }
 
         function goToHome() {
-            window.location.href = "Admin.html";
+            window.location.href = "Admin.php";
         }
     </script>
 </body>

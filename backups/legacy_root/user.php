@@ -1,7 +1,7 @@
 <?php 
 session_start(); 
 if(!isset($_SESSION['userLoggedIn'])) { 
-    header("Location: ../login.html"); 
+    header("Location: login.html"); 
     exit(); 
 } 
 ?>
@@ -21,27 +21,17 @@ if(!isset($_SESSION['userLoggedIn'])) {
   <div class="container">
     <div class="nav-bar">
       <div class="logo">
-        <img src="../img/logo.png" alt="LibriNet Logo" id="img">
+        <img src="img/logo.png" alt="LibriNet Logo" id="img">
         <h2>LibriNet</h2>
       </div>
       <nav>
+
         <li><a href="#home">Home</a></li>
         <li><a href="#myprofile">My Profile</a></li>
         <li><a href="#Browse">Browse Catalog</a></li>
         <li><a href="#resource">Resources</a></li>
         <li><a href="#hold">Hold</a></li>
       </nav>
-      <!-- Navbar Profile Badge -->
-      <div class="nav-profile-badge" onclick="navigateToSection('myprofile')">
-          <div class="nav-avatar">
-              <img id="navProfileImage" src="" alt="Profile" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:50%;">
-              <i class="fa-solid fa-user" id="navProfileIcon"></i>
-          </div>
-          <div class="nav-user-info">
-              <span id="navUserName">Loading...</span>
-              <span id="navUserId">Student ID</span>
-          </div>
-      </div>
     </div>
   </div>
   <div class="home-page" id="home">
@@ -148,7 +138,7 @@ if(!isset($_SESSION['userLoggedIn'])) {
         <button onclick="navigateToSection('settings')"><i class="fa-solid fa-gear"></i> Settings</button>
         <button onclick="navigateToSection('notifications')"><i class="fa-solid fa-bell"></i> Notifications</button>
         <button onclick="navigateToSection('password')"><i class="fa-solid fa-key"></i> Change Password</button>
-        <button onclick="window.location.href='../logout.php'"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        <button onclick="window.location.href='logout.php'"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
         <hr>
         <div class="help">
           <h2><i class="fa-solid fa-headset"></i>Need Help?</h2>
@@ -533,12 +523,27 @@ if(!isset($_SESSION['userLoggedIn'])) {
     <!-- Results Section -->
     <div id="bookGrid" class="resource-cards"></div>
 
-    <!-- Dynamic Books By Subject Breakdown -->
-    <div class="category-breakdown" style="padding: 20px; text-align: center; margin-top: 30px; background: rgba(15, 23, 42, 0.4); border-radius: 20px;">
-        <h3 style="color: #f0a500; margin-bottom: 15px; font-family: 'Syne', sans-serif;"><i class="fa-solid fa-tags"></i> Books by Subject</h3>
-        <div id="categoryBreakdownContainer" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <!-- JS will populate category pills here -->
+    <div class="catego">
+      <h2>Browse by category</h2>
+
+      <div class="dashboards">
+
+        <div class="dashboard" onclick="filterCatalog('DAA')">
+          <i class="fa-solid fa-code-branch"></i>
+          <h3>DAA</h3>
+          <h4>Algorithms</h4>
         </div>
+        <div class="dashboard" onclick="filterCatalog('Web Development')">
+          <i class="fa-solid fa-code"></i>
+          <h3>Web Dev</h3>
+          <h4>HTML/CSS/JS</h4>
+        </div>
+        <div class="dashboard" onclick="filterCatalog('Computer Graphics')">
+          <i class="fa-solid fa-palette"></i>
+          <h3>Graphics</h3>
+          <h4>OpenGL/VR</h4>
+        </div>
+      </div>
     </div>
     <div class="recent-activity">
       <h2>Recent Activity</h2>
