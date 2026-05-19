@@ -1,996 +1,985 @@
-// ============================================================
-//  USER.JS — LibriNet Library Portal
-//  Built to match user.html exactly
-// ============================================================
-
-
-// ── 1. DATA ──────────────────────────────────────────────────
-
-const books = [
-  { id: 1,  title: 'Introduction to Algorithms',      author: 'Cormen et al.',     category: 'Technology', format: 'Physical', status: 'Available' },
-  { id: 2,  title: 'Clean Code',                      author: 'Robert C. Martin',  category: 'Technology', format: 'Physical', status: 'Available' },
-  { id: 3,  title: 'The Pragmatic Programmer',         author: 'Andrew Hunt',       category: 'Technology', format: 'E-Book',   status: 'Borrowed'  },
-  { id: 4,  title: 'Design Patterns',                  author: 'Gang of Four',      category: 'Technology', format: 'Physical', status: 'Available' },
-  { id: 5,  title: 'The Art of Computer Programming',  author: 'Donald Knuth',      category: 'Education',  format: 'Physical', status: 'Available' },
-  { id: 6,  title: 'Artificial Intelligence',          author: 'Russell & Norvig',  category: 'Science',    format: 'Physical', status: 'Available' },
-  { id: 7,  title: "You Don't Know JS",                author: 'Kyle Simpson',      category: 'Technology', format: 'E-Book',   status: 'Available' },
-  { id: 8,  title: 'The Rust Programming Language',    author: 'Klabnik & Nichols', category: 'Technology', format: 'E-Book',   status: 'Available' },
-  { id: 9,  title: 'Atomic Habits',                    author: 'James Clear',       category: 'Business',   format: 'Physical', status: 'Borrowed'  },
-  { id: 10, title: 'Sapiens',                          author: 'Yuval Noah Harari', category: 'Education',  format: 'Physical', status: 'Available' },
-  { id: 11, title: 'Deep Work',                        author: 'Cal Newport',       category: 'Business',   format: 'Physical', status: 'Available' },
-  { id: 12, title: 'The Alchemist',                    author: 'Paulo Coelho',      category: 'Fiction',    format: 'Physical', status: 'Available' },
-];
-
-// Glance stats (linked to real borrow actions)
-let glanceStats = JSON.parse(localStorage.getItem('glanceStats')) || {
-  borrowed: 7,
-  onHold:   2,
-  favorites: 5,
-  searches: 3
+// --- Mock Data & Initial State ---
+let currentUser = JSON.parse(localStorage.getItem('currentUser')) || {
+    id: 'LIB123456789',
+    name: 'Firaol Tadesse',
+    email: 'firaol.tadesse@example.com',
+    phone: '+2519356394',
+    dob: 'January 15, 2002',
+    gender: 'Male',
+    department: 'Computer Science',
+    address: {
+        street: 'Bole Road, Near Edna Mall',
+        city: 'Addis Ababa',
+        region: 'Addis Ababa',
+        country: 'Ethiopia',
+        postal: '1000'
+    },
+    borrowed: 7,
+    holds: 2,
+    favorites: 5,
+    recent: 3
 };
 
-// Hold list
-let holds = JSON.parse(localStorage.getItem('holds')) || [];
+function contactSupport() {
+    document.getElementById('supportModal').style.display = 'flex';
+}
 
-// Favorites list
-let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+function closeSupportModal() {
+    document.getElementById('supportModal').style.display = 'none';
+}
 
-// Activity log
-let activityLog = JSON.parse(localStorage.getItem('activityLog')) || [
-  { icon: 'fa-book-open',           title: 'Atomic Habits',  author: 'James Clear',       date: 'May 10, 2026', due: 'May 24, 2026', status: 'Borrowed' },
-  { icon: 'fa-bookmark',            title: 'The Alchemist',  author: 'Paulo Coelho',      date: 'May 8, 2026',  due: '—',            status: 'On Hold'  },
-  { icon: 'fa-rotate-left',         title: 'Deep Work',      author: 'Cal Newport',       date: 'May 5, 2026',  due: '—',            status: 'Returned' },
-  { icon: 'fa-triangle-exclamation',title: 'Sapiens',        author: 'Yuval Noah Harari', date: 'Apr 20, 2026', due: 'May 4, 2026',  status: 'Overdue'  },
+function submitSupportTicket(event) {
+    event.preventDefault();
+    const subject = document.getElementById('supportSubject').value.trim();
+    const message = document.getElementById('supportMessage').value.trim();
+
+    const ticket = {
+        id: 'TKT' + Date.now(),
+        userId: currentUser.id,
+        userName: currentUser.name,
+        subject: subject,
+        message: message,
+        date: new Date().toLocaleString(),
+        status: 'Pending'
+    };
+
+    // Save to global support list (simulated admin inbox)
+    let tickets = JSON.parse(localStorage.getItem('supportTickets')) || [];
+    tickets.push(ticket);
+    localStorage.setItem('supportTickets', JSON.stringify(tickets));
+
+    alert('Your message has been sent to the admin team!');
+    closeSupportModal();
+    
+    // Clear form
+    document.getElementById('supportSubject').value = '';
+    document.getElementById('supportMessage').value = '';
+}
+
+let books = JSON.parse(localStorage.getItem('libraryBooks')) || [
+    { id: 1, title: 'Introduction to Algorithms', author: 'Cormen et al.', category: 'DAA', status: 'Available', cover: 'https://images-na.ssl-images-amazon.com/images/I/41T07nqZneL._SX396_BO1,204,203,200_.jpg' },
+    { id: 2, title: 'Clean Code', author: 'Robert C. Martin', category: 'Web Development', status: 'Available', cover: 'https://images-na.ssl-images-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg' },
+    { id: 3, title: 'The Pragmatic Programmer', author: 'Andrew Hunt', category: 'Web Development', status: 'Borrowed', cover: 'https://images-na.ssl-images-amazon.com/images/I/41HInlou71L._SX396_BO1,204,203,200_.jpg' },
+    { id: 4, title: 'Design Patterns', author: 'Gang of Four', category: 'Web Development', status: 'Available', cover: 'https://images-na.ssl-images-amazon.com/images/I/51szD9HC9pL._SX395_BO1,204,203,200_.jpg' },
+    { id: 5, title: 'OpenGL Programming Guide', author: 'Khronos Group', category: 'Computer Graphics', status: 'Available', cover: 'https://images-na.ssl-images-amazon.com/images/I/416H7tK7rML._SX379_BO1,204,203,200_.jpg' },
+    { id: 6, title: 'Artificial Intelligence', author: 'Russell & Norvig', category: 'DAA', status: 'Available', cover: 'https://images-na.ssl-images-amazon.com/images/I/517684-mKmL._SX388_BO1,204,203,200_.jpg' },
+    { id: 7, title: 'You Don\'t Know JS', author: 'Kyle Simpson', category: 'Web Development', status: 'Available', cover: 'https://images-na.ssl-images-amazon.com/images/I/41-reA+C31L._SX331_BO1,204,203,200_.jpg' },
+    { id: 8, title: 'Computer Graphics: Principles', author: 'Hughes et al.', category: 'Computer Graphics', status: 'Available', cover: 'https://via.placeholder.com/100x140?text=Graphics' }
 ];
 
-
-// ── 2. INIT ──────────────────────────────────────────────────
-
+// --- Initialize Page ---
 document.addEventListener('DOMContentLoaded', () => {
-  setupNavScroll();
-  setupNavLinks();
-  setupSidebarButtons();
-  populateCatalogDropdowns();
-  setupCatalogSearch();
-  setupQuickFilters();
-  setupCategoryCards();
-  setupResourceFilters();
-  setupResourceSearch();
-  setupResourceViewToggle();
-  setupResourcePagination();
-  setupResourceActionButtons();
-  setupEditProfile();
-  updateGlanceStats();
-  renderActivityTable();
-  setupHomeSearch();
-  setupHomeDashboardCards();
-  setupLogout();
-  setupContactSupport();
-  setupSortBy();
+    loadUserProfile();
+    updateStats();
+    renderBooks(books);
 });
 
+// --- User Profile ---
+function loadUserProfile() {
+    const safeSet = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    };
 
-// ── 3. NAVBAR ────────────────────────────────────────────────
+    safeSet('userNameDisplay', currentUser.name);
+    safeSet('userIdDisplay', currentUser.id);
 
-function setupNavScroll() {
-  const navbar = document.querySelector('.container .nav-bar');
-  window.addEventListener('scroll', () => {
-    if (!navbar) return;
-    if (window.scrollY > 60) {
-      navbar.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-      navbar.style.background = 'rgb(5, 6, 9)';
+    // Profile Image
+    const profileImg = document.getElementById('profileImage');
+    const avatarPlaceholder = document.querySelector('#userAvatar i');
+    if (currentUser.profilePic) {
+        if (profileImg) {
+            profileImg.src = currentUser.profilePic;
+            profileImg.style.display = 'block';
+        }
+        if (avatarPlaceholder) avatarPlaceholder.style.display = 'none';
     } else {
-      navbar.style.boxShadow = 'none';
-      navbar.style.background = 'rgb(15, 16, 19)';
+        if (profileImg) profileImg.style.display = 'none';
+        if (avatarPlaceholder) avatarPlaceholder.style.display = 'block';
     }
-  });
+
+    // Fill the detailed info table and sections
+    safeSet('infoFullName', currentUser.name);
+    safeSet('infoEmail', currentUser.email);
+    safeSet('infoPhone', currentUser.phone || '+251 92 654 478');
+    safeSet('infoDOB', currentUser.dob || 'January 15, 2002');
+    safeSet('infoGender', currentUser.gender || 'Male');
+    safeSet('infoDept', currentUser.department || 'Computer Science');
+
+    // Address Info
+    if (currentUser.address) {
+        safeSet('infoStreet', currentUser.address.street);
+        safeSet('infoCity', currentUser.address.city);
+        safeSet('infoRegion', currentUser.address.region);
+        safeSet('infoCountry', currentUser.address.country);
+        safeSet('infoPostal', currentUser.address.postal);
+    }
+
+    // Pre-fill settings form
+    const ids = {
+        'setDisplayName': currentUser.name,
+        'setEmail': currentUser.email,
+        'setPhone': currentUser.phone,
+        'setDOB': currentUser.dob,
+        'setGender': currentUser.gender,
+        'setDept': currentUser.department,
+        'setStreet': currentUser.address?.street,
+        'setCity': currentUser.address?.city,
+        'setRegion': currentUser.address?.region,
+        'setCountry': currentUser.address?.country,
+        'setPostal': currentUser.address?.postal
+    };
+
+    for (let id in ids) {
+        const el = document.getElementById(id);
+        if (el) el.value = ids[id] || '';
+    }
+
+    // Membership Card
+    safeSet('membershipType', currentUser.membershipType || 'Regular Member');
+    const statusBtn = document.getElementById('memberStatusBtn');
+    if (statusBtn) statusBtn.textContent = (currentUser.status || 'Active') + ' Member';
 }
 
-// Make nav links smoothly scroll AND highlight active section
-function setupNavLinks() {
-  const links = document.querySelectorAll('.nav-bar nav li a');
-  links.forEach(link => {
-    link.addEventListener('click', (e) => {
-      links.forEach(l => l.style.color = 'white');
-      link.style.color = '#4ade80'; // green highlight
-    });
-  });
-
-  // Highlight nav link based on scroll position
-  const sections = ['home', 'myprofile', 'Browse', 'resource'];
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(id => {
-      const el = document.getElementById(id);
-      if (el && window.scrollY >= el.offsetTop - 120) current = id;
-    });
-    links.forEach(link => {
-      const href = link.getAttribute('href').replace('#', '');
-      link.style.color = href === current ? '#4ade80' : 'white';
-    });
-  });
+// --- Profile Upload ---
+function triggerProfileUpload() {
+    document.getElementById('profileUpload').click();
 }
 
+function handleProfileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
 
-// ── 4. HOME PAGE ─────────────────────────────────────────────
-
-function setupHomeSearch() {
-  const btn = document.querySelector('.search-box button');
-  const input = document.getElementById('searchInputHome');
-  if (!btn || !input) return;
-
-  btn.addEventListener('click', runHomeSearch);
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') runHomeSearch(); });
-
-  // Live results as user types
-  input.addEventListener('input', debounce(() => {
-    if (input.value.trim().length > 0) runHomeSearch();
-    else closeHomeResults();
-  }, 300));
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const result = e.target.result;
+        currentUser.profilePic = result;
+        saveState();
+        loadUserProfile();
+        alert('Profile picture updated successfully!');
+    };
+    reader.readAsDataURL(file);
 }
 
-function runHomeSearch() {
-  const type  = document.getElementById('searchTypeHome').value;
-  const query = document.getElementById('searchInputHome').value.trim().toLowerCase();
+// --- Settings & Password Logic ---
+function saveUserSettings(event) {
+    event.preventDefault();
+    
+    // Personal Info
+    currentUser.name = document.getElementById('setDisplayName').value.trim();
+    currentUser.email = document.getElementById('setEmail').value.trim();
+    currentUser.phone = document.getElementById('setPhone').value.trim();
+    currentUser.dob = document.getElementById('setDOB').value.trim();
+    currentUser.gender = document.getElementById('setGender').value;
+    currentUser.department = document.getElementById('setDept').value.trim();
 
-  if (!query) { closeHomeResults(); return; }
+    // Address Info
+    if (!currentUser.address) currentUser.address = {};
+    currentUser.address.street = document.getElementById('setStreet').value.trim();
+    currentUser.address.city = document.getElementById('setCity').value.trim();
+    currentUser.address.region = document.getElementById('setRegion').value.trim();
+    currentUser.address.country = document.getElementById('setCountry').value.trim();
+    currentUser.address.postal = document.getElementById('setPostal').value.trim();
 
-  // Filter books by selected type
-  const results = books.filter(b => {
-    if (type === 'title')   return b.title.toLowerCase().includes(query);
-    if (type === 'author')  return b.author.toLowerCase().includes(query);
-    if (type === 'subject') return b.category.toLowerCase().includes(query);
-    return b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query);
-  });
-
-  glanceStats.searches++;
-  saveStats();
-  updateGlanceStats();
-
-  showHomeResults(results, query);
+    saveState();
+    loadUserProfile();
+    alert('Profile and address updated successfully!');
 }
 
-function showHomeResults(results, query) {
-  // Create or reuse the results panel inside .upper-home, right below the search box
-  let panel = document.getElementById('homeSearchResults');
-  if (!panel) {
-    panel = document.createElement('div');
-    panel.id = 'homeSearchResults';
-    // Insert it right after .search-box inside .upper-home
-    const searchBox = document.querySelector('.search-box');
-    searchBox.insertAdjacentElement('afterend', panel);
-  }
+function changeUserPassword(event) {
+    event.preventDefault();
+    const curr = document.getElementById('currPass').value;
+    const nPass = document.getElementById('newPass').value;
+    const cPass = document.getElementById('confirmPass').value;
 
-  if (results.length === 0) {
-    panel.innerHTML = `
-      <div style="padding:20px 90px;">
-        <div style="background:white;border-radius:12px;padding:20px 24px;
-          box-shadow:0 4px 20px rgba(0,0,0,0.10);display:flex;align-items:center;gap:12px;">
-          <i class="fa-solid fa-magnifying-glass" style="font-size:20px;color:#9ca3af;background:none;padding:0;margin:0;"></i>
-          <span style="font-size:15px;color:#6b7280;">No books found for "<strong>${escHtml(query)}</strong>"</span>
-        </div>
-      </div>`;
-    return;
-  }
+    const savedPassword = localStorage.getItem('userPassword') || 'student123'; // Default for demo
 
-  panel.innerHTML = `
-    <div style="padding:20px 90px 30px;">
-      <div style="background:white;border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,0.12);overflow:hidden;">
+    if (curr !== savedPassword) {
+        alert('Incorrect current password.');
+        return;
+    }
 
-        <!-- Header -->
-        <div style="padding:16px 24px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:16px;font-weight:700;color:#0b2e13;">
-            <i class="fa-solid fa-magnifying-glass" style="background:none;padding:0;margin:0 8px 0 0;font-size:14px;color:#0b2e13;"></i>
-            ${results.length} result${results.length !== 1 ? 's' : ''} for "<strong>${escHtml(query)}</strong>"
-          </span>
-          <button onclick="closeHomeResults()"
-            style="background:none;border:none;cursor:pointer;font-size:18px;color:#9ca3af;line-height:1;">✕</button>
-        </div>
+    if (nPass !== cPass) {
+        alert('New passwords do not match.');
+        return;
+    }
 
-        <!-- Results list -->
-        <div style="max-height:380px;overflow-y:auto;">
-          ${results.map(b => `
-            <div style="display:flex;align-items:center;justify-content:space-between;
-              padding:16px 24px;border-bottom:1px solid #f3f4f6;transition:background 0.2s;"
-              onmouseenter="this.style.background='#f9fafb'"
-              onmouseleave="this.style.background='white'">
+    if (nPass.length < 6) {
+        alert('Password must be at least 6 characters.');
+        return;
+    }
 
-              <!-- Book icon + info -->
-              <div style="display:flex;align-items:center;gap:16px;">
-                <div style="width:44px;height:44px;border-radius:10px;background:#e8f5e9;
-                  display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                  <i class="fa-solid fa-book-open" style="font-size:18px;color:#0b2e13;background:none;padding:0;margin:0;"></i>
+    localStorage.setItem('userPassword', nPass);
+    alert('Password updated successfully!');
+    event.target.reset();
+}
+
+function toggleEditMode(sectionId) {
+    // Simple toggle for demo - could swap P for INPUT tags
+    const section = document.getElementById(sectionId);
+    if (sectionId === 'personal-info') {
+        const settingsSection = document.getElementById('settings');
+        if (settingsSection) settingsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// --- Dashboard Stats ---
+function updateStats() {
+    const safeSet = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    };
+
+    safeSet('statBorrowed', currentUser.borrowed);
+    safeSet('statPending', currentUser.holds);
+    safeSet('statReturned', currentUser.favorites);
+    // countRecent is for searches
+}
+
+// --- Book Catalog Rendering ---
+function renderBooks(booksToRender) {
+    const grid = document.getElementById('bookGrid');
+    if (!grid) return;
+
+    // Filter out any corrupted test data like 'zdzfvh'
+    const validBooks = booksToRender.filter(b => b && b.title && b.title !== 'zdzfvh');
+
+    if (validBooks.length === 0) {
+        grid.innerHTML = '<div class="no-results" style="padding: 40px; text-align: center; width: 100%; color: #666;">No books found in the catalog.</div>';
+        return;
+    }
+
+    grid.innerHTML = validBooks.map(book => {
+        const isDigital = book.isDigitalResource;
+        const status = isDigital ? book.status : (book.status || 'Available');
+        const title = book.title || 'Untitled Book';
+        const author = book.author || 'Unknown';
+        const cover = book.cover || '';
+        // An item is considered a book if it's NOT digital, OR if it's an E-Book
+        const isBook = !isDigital || (book.type && book.type.toLowerCase().includes('book'));
+        const currentStatus = isBook ? (book.status || 'Available') : book.status;
+        const isAvailable = currentStatus === 'Available';
+        const isBorrowedByMe = currentStatus === 'Borrowed' && book.borrowedBy === 'currentUser';
+        const isBorrowedByOther = currentStatus === 'Borrowed' && book.borrowedBy !== 'currentUser';
+
+        return `
+        <div class="resource-card">
+            <div class="resource-cover">
+                <span class="resource-tag">${isBook ? 'Physical Book' : 'Study Material'}</span>
+                <div class="cover-placeholder">
+                    ${cover ? `<img src="${cover}" alt="${title}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-book\'></i>'">` : `<i class="fa-solid ${isBook ? 'fa-book' : 'fa-file-pdf'}"></i>`}
                 </div>
-                <div>
-                  <div style="font-weight:700;font-size:15px;color:#111827;">${escHtml(b.title)}</div>
-                  <div style="font-size:13px;color:#6b7280;margin-top:2px;">by ${escHtml(b.author)}</div>
-                  <div style="font-size:12px;color:#9ca3af;margin-top:2px;">${b.category} · ${b.format}</div>
-                </div>
-              </div>
-
-              <!-- Status + actions -->
-              <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-                <span style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;
-                  background:${b.status === 'Available' ? '#d1fae5' : '#fee2e2'};
-                  color:${b.status === 'Available' ? '#065f46' : '#991b1b'};">
-                  ${b.status}
-                </span>
-                ${b.status === 'Available' ? `
-                  <button onclick="borrowBookFromHome(${b.id})"
-                    style="padding:7px 16px;background:#0b2e13;color:white;border:none;
-                    border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">
-                    Borrow
-                  </button>` : ''}
-                <button onclick="toggleFavoriteFromHome(${b.id}, this)"
-                  style="padding:7px 14px;border:1px solid #d1d5db;border-radius:8px;
-                  cursor:pointer;font-size:13px;background:white;color:#374151;">
-                  ♥
-                </button>
-              </div>
+                ${isBook && currentStatus === 'Borrowed' ? `<div class="borrowed-badge">Borrowed</div>` : ''}
             </div>
-          `).join('')}
+            <div class="resource-card-info">
+                <h4>${title}</h4>
+                <p class="resource-author">${!isBook ? 'Course Material' : 'by ' + author}</p>
+                <p class="resource-meta">
+                    <i class="fa-solid ${!isBook ? 'fa-file-powerpoint' : (isAvailable ? 'fa-circle-check' : 'fa-circle-xmark')}"
+                       style="color: ${!isBook ? '' : (isAvailable ? '#16a34a' : '#dc2626')}"></i>
+                    ${!isBook ? (book.format || book.type || 'PPT') : currentStatus}
+                </p>
+                ${book.format === 'Video' || book.type === 'Video' ? `
+                    <button class="resource-action-btn" onclick="viewResource(${book.id})" style="border-color: #8b5cf6; color: #7c3aed;">
+                        <i class="fa-solid fa-circle-play" style="color: #8b5cf6;"></i> Watch Now
+                    </button>
+                ` : isAvailable ? `
+                    <button class="resource-action-btn btn-borrow" onclick="borrowBook(${book.id})">
+                        <i class="fa-solid fa-book-reader"></i> Borrow Book
+                    </button>
+                ` : isBorrowedByMe ? `
+                    <button class="resource-action-btn btn-return" onclick="returnBook(${book.id})">
+                        <i class="fa-solid fa-rotate-left"></i> Return Book
+                    </button>
+                ` : `
+                    <button class="resource-action-btn btn-hold" onclick="placeHold(${book.id})">
+                        <i class="fa-solid fa-bookmark"></i> Place Hold
+                    </button>
+                `}
+            </div>
+
         </div>
-
-      </div>
-    </div>`;
+    `}).join('');
 }
 
-function closeHomeResults() {
-  const panel = document.getElementById('homeSearchResults');
-  if (panel) panel.innerHTML = '';
+function getCoverClass(category) {
+    const cat = category ? category.toLowerCase() : '';
+    if (cat.includes('e-book')) return 'ebook-cover';
+    if (cat.includes('journal')) return 'journal-cover';
+    if (cat.includes('textbook')) return 'study-cover';
+    return 'web-cover';
 }
 
-// Borrow directly from home search results
-function borrowBookFromHome(bookId) {
-  const book = books.find(b => b.id === bookId);
-  if (!book || book.status !== 'Available') return;
-
-  showConfirm(`Borrow "${book.title}"?`, () => {
-    book.status = 'Borrowed';
-    glanceStats.borrowed++;
-    saveStats();
-    updateGlanceStats();
-
-    const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const dueDate = new Date(); dueDate.setDate(dueDate.getDate() + 14);
-    const due = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-    activityLog.unshift({ icon: 'fa-book-open', title: book.title, author: book.author, date: today, due, status: 'Borrowed' });
-    localStorage.setItem('activityLog', JSON.stringify(activityLog));
-    renderActivityTable();
-
-    // Refresh results panel to show updated status
-    runHomeSearch();
-    showToast(`"${book.title}" borrowed! Pick it up from the library.`);
-  });
+function getTagClass(category) {
+    const cat = category ? category.toLowerCase() : '';
+    if (cat.includes('e-book')) return 'ebook-tag';
+    if (cat.includes('journal')) return 'journal-tag';
+    if (cat.includes('textbook')) return 'study-tag';
+    return 'web-tag';
 }
 
-// Favorite directly from home search results
-function toggleFavoriteFromHome(bookId, btn) {
-  const book = books.find(b => b.id === bookId);
-  if (!book) return;
-  const idx = favorites.findIndex(f => f.id === bookId);
-  if (idx === -1) {
-    favorites.push(book);
-    glanceStats.favorites++;
-    btn.style.color = '#ef4444';
-    btn.style.borderColor = '#ef4444';
-    showToast(`"${book.title}" added to favorites ♥`);
-  } else {
-    favorites.splice(idx, 1);
-    glanceStats.favorites = Math.max(0, glanceStats.favorites - 1);
-    btn.style.color = '#374151';
-    btn.style.borderColor = '#d1d5db';
-    showToast(`"${book.title}" removed from favorites`);
-  }
-  localStorage.setItem('favorites', JSON.stringify(favorites));
-  saveStats();
-  updateGlanceStats();
-}
+// --- Search Logic (The Core Fix) ---
+function searchBook(context) {
+    console.log("Universal search triggered for:", context);
+    
+    const typeEl = document.getElementById(context === 'Home' ? 'searchTypeHome' : 'categories');
+    const inputEl = document.getElementById(context === 'Home' ? 'searchInputHome' : 'searchInputBooks');
+    const resultsContainer = document.getElementById(context === 'Home' ? 'homeSearchResults' : 'bookGrid');
 
-// Dashboard cards on home page → scroll to matching section
-function setupHomeDashboardCards() {
-  const cards = document.querySelectorAll('.lower-home .dashboard-cards');
-  const targets = ['Browse', 'myprofile', 'resource', 'Browse', 'myprofile'];
-  cards.forEach((card, i) => {
-    card.style.cursor = 'pointer';
-    card.addEventListener('click', () => {
-      const target = document.getElementById(targets[i]);
-      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    if (!typeEl || !inputEl || !resultsContainer) return;
+
+    const query = (inputEl.value || '').toLowerCase();
+    const type = typeEl.value; 
+
+    // 1. Filter Physical Books
+    let bookResults = books.filter(b => {
+        const matchesQuery = b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query);
+        const matchesCategory = !type || type === 'all' || type === 'All' || b.category === type;
+        return matchesQuery && matchesCategory;
     });
-    // Hover effect
-    card.addEventListener('mouseenter', () => {
-      card.style.transform   = 'translateY(-6px)';
-      card.style.boxShadow   = '0 8px 24px rgba(0,0,0,0.12)';
-      card.style.transition  = '0.3s';
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
-      card.style.boxShadow = '';
-    });
-  });
-}
 
-
-// ── 5. PROFILE SIDEBAR ───────────────────────────────────────
-
-function setupSidebarButtons() {
-  const buttons = document.querySelectorAll('.sidebar-buttons button');
-  // Map button index to action
-  const actions = [
-    () => scrollToMiddle(),                        // Profile Overview
-    () => scrollToMiddle(),                        // Personal Information
-    () => showBorrowingHistoryModal(),             // Borrowing History
-    () => showHoldsModal(),                        // Holds
-    () => showFavoritesModal(),                    // Favorites
-    () => showSettingsModal(),                     // Settings
-    () => showNotificationsModal(),                // Notifications
-    () => showChangePasswordModal(),               // Change Password
-    () => logout(),                                // Logout
-  ];
-  buttons.forEach((btn, i) => {
-    if (actions[i]) btn.addEventListener('click', actions[i]);
-  });
-}
-
-function scrollToMiddle() {
-  document.querySelector('.middle')?.scrollIntoView({ behavior: 'smooth' });
-}
-
-// Edit Profile button
-function setupEditProfile() {
-  const editBtn = document.querySelector('.profile-right button');
-  if (!editBtn) return;
-  editBtn.addEventListener('click', () => {
-    showModal('Edit Profile', `
-      <div class="modal-form">
-        <label>Full Name</label>
-        <input type="text" id="editName" value="Firaol Tadesse" />
-        <label>Email</label>
-        <input type="email" id="editEmail" value="firaol.tadesse@example.com" />
-        <label>Phone</label>
-        <input type="text" id="editPhone" value="+251 92 654 478" />
-      </div>
-    `, () => {
-      const name  = document.getElementById('editName').value;
-      const email = document.getElementById('editEmail').value;
-      const phone = document.getElementById('editPhone').value;
-      // Update displayed name
-      document.querySelector('.info h3').textContent          = name;
-      document.querySelector('.info p').textContent           = email;
-      document.querySelector('.meta span:first-child').innerHTML = `<i class="fa-solid fa-phone"></i> ${phone}`;
-      showToast('Profile updated successfully!');
-    });
-  });
-}
-
-
-// ── 6. BROWSE CATALOG ────────────────────────────────────────
-
-function populateCatalogDropdowns() {
-  // Categories
-  const cats = [...new Set(books.map(b => b.category))];
-  const catSel = document.getElementById('categories');
-  if (catSel) {
-    cats.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c; opt.textContent = c;
-      catSel.appendChild(opt);
-    });
-  }
-
-  // Formats
-  const fmts = [...new Set(books.map(b => b.format))];
-  const fmtSel = document.getElementById('formats');
-  if (fmtSel) {
-    fmts.forEach(f => {
-      const opt = document.createElement('option');
-      opt.value = f; opt.textContent = f;
-      fmtSel.appendChild(opt);
-    });
-  }
-
-  // Availability
-  const avSel = document.getElementById('availability');
-  if (avSel) {
-    ['Available', 'Borrowed'].forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s; opt.textContent = s;
-      avSel.appendChild(opt);
-    });
-  }
-}
-
-function setupCatalogSearch() {
-  // Search button inside .finding
-  const searchBtn = document.querySelector('.finding #btn');
-  if (searchBtn) searchBtn.addEventListener('click', runCatalogFilter);
-
-  // Also search on Enter
-  const inp = document.getElementById('searchInputBooks');
-  if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') runCatalogFilter(); });
-  if (inp) inp.addEventListener('input', debounce(runCatalogFilter, 300));
-}
-
-function runCatalogFilter() {
-  const query    = (document.getElementById('searchInputBooks')?.value || '').toLowerCase().trim();
-  const category = document.getElementById('categories')?.value    || '';
-  const format   = document.getElementById('formats')?.value       || '';
-  const avail    = document.getElementById('availability')?.value  || '';
-
-  const results = books.filter(b => {
-    const matchQ = !query    || b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query);
-    const matchC = !category || b.category === category;
-    const matchF = !format   || b.format === format;
-    const matchA = !avail    || b.status === avail;
-    return matchQ && matchC && matchF && matchA;
-  });
-
-  // Track search in glance stats
-  if (query) { glanceStats.searches++; saveStats(); updateGlanceStats(); }
-
-  showCatalogResults(results, query || 'all');
-}
-
-function showCatalogResults(results, query) {
-  // Remove old results panel if exists
-  let panel = document.getElementById('catalogResultsPanel');
-  if (!panel) {
-    panel = document.createElement('div');
-    panel.id = 'catalogResultsPanel';
-    panel.style.cssText = 'margin:20px 50px;background:white;border-radius:12px;padding:25px;box-shadow:0 2px 12px rgba(0,0,0,0.08);';
-    document.getElementById('Browse').appendChild(panel);
-  }
-
-  if (results.length === 0) {
-    panel.innerHTML = `<p style="color:#6b7280;font-size:16px;">No books found matching your search.</p>`;
-    panel.scrollIntoView({ behavior: 'smooth' });
-    return;
-  }
-
-  panel.innerHTML = `
-    <h3 style="font-size:20px;font-weight:800;margin-bottom:16px;color:#0b2e13;">
-      ${results.length} result${results.length > 1 ? 's' : ''} found
-    </h3>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
-      ${results.map(b => `
-        <div style="border:1px solid #e5e7eb;border-radius:10px;padding:18px;display:flex;justify-content:space-between;align-items:center;">
-          <div>
-            <div style="font-weight:700;font-size:15px;color:#111827;">${escHtml(b.title)}</div>
-            <div style="font-size:13px;color:#6b7280;margin:4px 0;">by ${escHtml(b.author)}</div>
-            <div style="font-size:12px;color:#374151;">${b.category} · ${b.format}</div>
-          </div>
-          <div style="text-align:right;">
-            <span style="display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;
-              background:${b.status === 'Available' ? '#d1fae5' : '#fee2e2'};
-              color:${b.status === 'Available' ? '#065f46' : '#991b1b'};">
-              ${b.status}
-            </span>
-            ${b.status === 'Available' ? `
-              <br><button onclick="borrowBook(${b.id})"
-                style="margin-top:8px;padding:6px 14px;background:#0b2e13;color:white;border:none;border-radius:6px;cursor:pointer;font-size:13px;">
-                Borrow
-              </button>
-            ` : ''}
-            <br><button onclick="toggleFavorite(${b.id})"
-              style="margin-top:6px;padding:5px 12px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;font-size:12px;background:white;">
-              ♥ Favorite
-            </button>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-  panel.scrollIntoView({ behavior: 'smooth' });
-}
-
-// Quick filter buttons (All Books, Available Now, E-Books, Most Borrowed, New Arrivals)
-function setupQuickFilters() {
-  const btns = document.querySelectorAll('#btns');
-  const labels = ['All Books', 'Available Now', 'E-Books', 'Most Borrowed', 'New Arrivals'];
-
-  btns.forEach((btn, i) => {
-    btns.forEach(b => b.style.background = 'white');
-    btn.addEventListener('click', () => {
-      btns.forEach(b => { b.style.background = 'white'; b.style.color = '#111827'; });
-      btn.style.background = '#0b2e13';
-      btn.style.color = 'white';
-
-      let filtered = [...books];
-      if (labels[i] === 'Available Now') filtered = books.filter(b => b.status === 'Available');
-      if (labels[i] === 'E-Books')       filtered = books.filter(b => b.format === 'E-Book');
-      if (labels[i] === 'Most Borrowed') filtered = books.filter(b => b.status === 'Borrowed');
-      if (labels[i] === 'New Arrivals')  filtered = books.slice(-4); // last 4 = newest
-
-      showCatalogResults(filtered, labels[i]);
-    });
-  });
-}
-
-// Category cards (Fiction, Science, Education, Technology, Health, Business, Arts & Design)
-function setupCategoryCards() {
-  const cards = document.querySelectorAll('.dashboards .dashboard');
-  const catMap = ['Fiction', 'Science', 'Education', 'Technology', 'Health', 'Business', 'Arts & Design'];
-
-  cards.forEach((card, i) => {
-    card.style.cursor = 'pointer';
-    card.addEventListener('click', () => {
-      const cat = catMap[i];
-      const filtered = books.filter(b => b.category === cat);
-      // Also set the dropdown
-      const sel = document.getElementById('categories');
-      if (sel) sel.value = cat;
-      showCatalogResults(filtered.length ? filtered : [], cat);
-      showToast(`Showing ${cat} books`);
-    });
-    card.addEventListener('mouseenter', () => {
-      card.style.background   = '#0b2e13';
-      card.style.color        = 'white';
-      card.style.transition   = '0.3s';
-      card.querySelectorAll('h3, h4, i').forEach(el => el.style.color = 'white');
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.background = '#e6e9e6';
-      card.style.color      = '';
-      card.querySelectorAll('h3, h4, i').forEach(el => el.style.color = '');
-    });
-  });
-}
-
-// Borrow a book
-function borrowBook(bookId) {
-  const book = books.find(b => b.id === bookId);
-  if (!book || book.status !== 'Available') return;
-
-  showConfirm(`Borrow "${book.title}"?`, () => {
-    book.status = 'Borrowed';
-    glanceStats.borrowed++;
-    saveStats();
-    updateGlanceStats();
-
-    // Add to activity log
-    const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const dueDate = new Date(); dueDate.setDate(dueDate.getDate() + 14);
-    const due = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-    activityLog.unshift({ icon: 'fa-book-open', title: book.title, author: book.author, date: today, due, status: 'Borrowed' });
-    localStorage.setItem('activityLog', JSON.stringify(activityLog));
-    renderActivityTable();
-
-    // Re-render results
-    runCatalogFilter();
-    showToast(`"${book.title}" borrowed! Pick it up from the library.`);
-  });
-}
-
-// Favorite a book
-function toggleFavorite(bookId) {
-  const book = books.find(b => b.id === bookId);
-  if (!book) return;
-  const idx = favorites.findIndex(f => f.id === bookId);
-  if (idx === -1) {
-    favorites.push(book);
-    glanceStats.favorites++;
-    showToast(`"${book.title}" added to favorites ♥`);
-  } else {
-    favorites.splice(idx, 1);
-    glanceStats.favorites = Math.max(0, glanceStats.favorites - 1);
-    showToast(`"${book.title}" removed from favorites`);
-  }
-  localStorage.setItem('favorites', JSON.stringify(favorites));
-  saveStats();
-  updateGlanceStats();
-}
-
-
-// ── 7. ACTIVITY TABLE ────────────────────────────────────────
-
-function renderActivityTable() {
-  const tbody = document.querySelector('.activity-table tbody');
-  if (!tbody) return;
-
-  tbody.innerHTML = activityLog.map(item => {
-    const badgeClass = item.status.toLowerCase().replace(' ', '-');
-    return `
-      <tr>
-        <td><div class="activity-icon-cell"><i class="fa-solid ${item.icon}"></i></div></td>
-        <td>
-          <div class="book-title">${escHtml(item.title)}</div>
-          <div class="book-author">${escHtml(item.author)}</div>
-        </td>
-        <td>${item.date}</td>
-        <td>${item.due}</td>
-        <td><span class="activity-badge ${badgeClass}">${item.status}</span></td>
-      </tr>
-    `;
-  }).join('');
-}
-
-
-// ── 8. GLANCE STATS ──────────────────────────────────────────
-
-function updateGlanceStats() {
-  const counts = document.querySelectorAll('.glance-info .count');
-  if (counts[0]) counts[0].textContent = glanceStats.borrowed;
-  if (counts[1]) counts[1].textContent = glanceStats.onHold;
-  if (counts[2]) counts[2].textContent = glanceStats.favorites;
-  if (counts[3]) counts[3].textContent = glanceStats.searches;
-}
-
-function saveStats() {
-  localStorage.setItem('glanceStats', JSON.stringify(glanceStats));
-}
-
-
-// ── 9. RESOURCES PAGE ────────────────────────────────────────
-
-// Quick filter buttons in Resources
-function setupResourceFilters() {
-  const rfBtns = document.querySelectorAll('.rf-btn');
-  rfBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      rfBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const label = btn.textContent.trim();
-      filterResourceCards(label);
-    });
-  });
-}
-
-function filterResourceCards(filter) {
-  const cards = document.querySelectorAll('.resource-card');
-  cards.forEach(card => {
-    const tag = card.querySelector('.resource-tag')?.textContent.trim() || '';
-    const show =
-      filter.includes('All') ||
-      (filter.includes('E-Book')   && tag === 'E-Book')  ||
-      (filter.includes('Journal')  && tag === 'Journal') ||
-      (filter.includes('Study')    && tag === 'Study Material') ||
-      (filter.includes('Video')    && tag === 'Video')   ||
-      (filter.includes('Web')      && tag === 'Web Resource');
-    card.style.display = show ? '' : 'none';
-  });
-}
-
-// Resource search bar
-function setupResourceSearch() {
-  const btn = document.querySelector('.resource-search-btn');
-  const inp = document.querySelector('.resource-input-wrap input');
-  if (!btn || !inp) return;
-
-  btn.addEventListener('click', () => runResourceSearch());
-  inp.addEventListener('keydown', e => { if (e.key === 'Enter') runResourceSearch(); });
-}
-
-function runResourceSearch() {
-  const inp    = document.querySelector('.resource-input-wrap input');
-  const type   = document.querySelector('.resource-search-group select');
-  const query  = inp?.value.trim().toLowerCase() || '';
-
-  const cards = document.querySelectorAll('.resource-card');
-  let found = 0;
-  cards.forEach(card => {
-    const title  = card.querySelector('h4')?.textContent.toLowerCase() || '';
-    const author = card.querySelector('.resource-author')?.textContent.toLowerCase() || '';
-    const match  = !query || title.includes(query) || author.includes(query);
-    card.style.display = match ? '' : 'none';
-    if (match) found++;
-  });
-
-  showToast(query ? `Found ${found} resource${found !== 1 ? 's' : ''} for "${query}"` : 'Showing all resources');
-}
-
-// View toggle (grid / list)
-function setupResourceViewToggle() {
-  const viewBtns = document.querySelectorAll('.view-btn');
-  const grid     = document.querySelector('.resource-cards');
-  viewBtns.forEach((btn, i) => {
-    btn.addEventListener('click', () => {
-      viewBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      if (!grid) return;
-      if (i === 0) {
-        // Grid view
-        grid.style.gridTemplateColumns = 'repeat(6, 1fr)';
-      } else {
-        // List view
-        grid.style.gridTemplateColumns = '1fr';
-        grid.querySelectorAll('.resource-card').forEach(c => {
-          c.style.display      = 'flex';
-          c.style.flexDirection = 'row';
-        });
-      }
-    });
-  });
-}
-
-// Pagination
-function setupResourcePagination() {
-  const pageNums = document.querySelectorAll('.page-num');
-  const arrows   = document.querySelectorAll('.page-arrow');
-  let current    = 1;
-  const total    = pageNums.length ? parseInt(pageNums[pageNums.length - 1].textContent) : 20;
-
-  function setPage(n) {
-    current = Math.max(1, Math.min(n, total));
-    pageNums.forEach(btn => {
-      const num = parseInt(btn.textContent);
-      btn.classList.toggle('active', num === current);
-    });
-    showToast(`Page ${current}`);
-  }
-
-  pageNums.forEach(btn => {
-    btn.addEventListener('click', () => setPage(parseInt(btn.textContent)));
-  });
-
-  arrows[0]?.addEventListener('click', () => setPage(current - 1)); // prev
-  arrows[1]?.addEventListener('click', () => setPage(current + 1)); // next
-}
-
-// Resource action buttons (View / Watch / Visit)
-function setupResourceActionButtons() {
-  document.querySelectorAll('.resource-action-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const card  = btn.closest('.resource-card');
-      const title = card?.querySelector('h4')?.textContent || 'this resource';
-      const type  = btn.textContent.trim();
-      if (type.includes('Visit')) {
-        showToast(`Opening ${title} in a new tab...`);
-        // In real usage: window.open(url, '_blank')
-      } else {
-        showToast(`${type === 'Watch' ? 'Playing' : 'Opening'}: ${title}`);
-      }
-    });
-  });
-}
-
-// Sort by
-function setupSortBy() {
-  const sortSel = document.querySelector('.sort-wrap select');
-  if (!sortSel) return;
-  sortSel.addEventListener('change', () => {
-    showToast(`Sorted by: ${sortSel.value}`);
-    // In a real app, re-fetch/sort resource-cards here
-  });
-}
-
-
-// ── 10. SIDEBAR MODAL PANELS ─────────────────────────────────
-
-function showBorrowingHistoryModal() {
-  const rows = activityLog.map(item => `
-    <tr>
-      <td>${escHtml(item.title)}</td>
-      <td>${item.date}</td>
-      <td>${item.due}</td>
-      <td><span class="activity-badge ${item.status.toLowerCase().replace(' ','-')}">${item.status}</span></td>
-    </tr>
-  `).join('');
-
-  showModal('Borrowing History', `
-    <table style="width:100%;border-collapse:collapse;font-size:14px;">
-      <thead><tr style="background:#f9fafb;">
-        <th style="padding:10px;text-align:left;">Book</th>
-        <th style="padding:10px;text-align:left;">Borrowed</th>
-        <th style="padding:10px;text-align:left;">Due</th>
-        <th style="padding:10px;text-align:left;">Status</th>
-      </tr></thead>
-      <tbody>${rows || '<tr><td colspan="4" style="padding:16px;color:#6b7280;">No history yet.</td></tr>'}</tbody>
-    </table>
-  `);
-}
-
-function showHoldsModal() {
-  const list = holds.length
-    ? holds.map(b => `<li style="padding:8px 0;border-bottom:1px solid #e5e7eb;">${escHtml(b.title)} <span style="color:#6b7280;">by ${escHtml(b.author)}</span></li>`).join('')
-    : '<li style="color:#6b7280;padding:8px 0;">No holds placed yet.</li>';
-  showModal('My Holds', `<ul style="list-style:none;font-size:15px;">${list}</ul>`);
-}
-
-function showFavoritesModal() {
-  const list = favorites.length
-    ? favorites.map(b => `
-        <li style="padding:10px 0;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;">
-          <span>${escHtml(b.title)} <span style="color:#6b7280;font-size:13px;">by ${escHtml(b.author)}</span></span>
-          <button onclick="toggleFavorite(${b.id});closeModal();" style="padding:4px 12px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;font-size:12px;">Remove</button>
-        </li>`)
-      .join('')
-    : '<li style="color:#6b7280;padding:8px 0;">No favorites yet. Search books and click ♥ Favorite.</li>';
-  showModal('My Favorites', `<ul style="list-style:none;font-size:15px;">${list}</ul>`);
-}
-
-function showSettingsModal() {
-  showModal('Settings', `
-    <div class="modal-form">
-      <label>Language</label>
-      <select><option>English</option><option>Amharic</option></select>
-      <label style="margin-top:16px;">Theme</label>
-      <select><option>Light</option><option>Dark</option></select>
-      <label style="margin-top:16px;">Email Notifications</label>
-      <label style="display:flex;align-items:center;gap:10px;font-weight:400;cursor:pointer;">
-        <input type="checkbox" checked /> Receive email reminders for due dates
-      </label>
-    </div>
-  `, () => showToast('Settings saved!'));
-}
-
-function showNotificationsModal() {
-  showModal('Notifications', `
-    <ul style="list-style:none;font-size:15px;">
-      <li style="padding:12px 0;border-bottom:1px solid #e5e7eb;">
-        <strong>📚 Reminder:</strong> "Atomic Habits" is due on May 24, 2026.
-      </li>
-      <li style="padding:12px 0;border-bottom:1px solid #e5e7eb;">
-        <strong>⚠️ Overdue:</strong> "Sapiens" was due May 4, 2026. Please return it.
-      </li>
-      <li style="padding:12px 0;color:#6b7280;">
-        No more notifications.
-      </li>
-    </ul>
-  `);
-}
-
-function showChangePasswordModal() {
-  showModal('Change Password', `
-    <div class="modal-form">
-      <label>Current Password</label>
-      <input type="password" placeholder="Enter current password" />
-      <label>New Password</label>
-      <input type="password" id="newPass" placeholder="Enter new password" />
-      <label>Confirm New Password</label>
-      <input type="password" id="confirmPass" placeholder="Confirm new password" />
-    </div>
-  `, () => {
-    const np = document.getElementById('newPass')?.value;
-    const cp = document.getElementById('confirmPass')?.value;
-    if (!np) { showToast('Please enter a new password.'); return; }
-    if (np !== cp) { showToast('Passwords do not match!'); return; }
-    showToast('Password changed successfully!');
-  });
-}
-
-function setupContactSupport() {
-  const btn = document.getElementById('btn');
-  // The last #btn in the sidebar is Contact Support
-  const allBtns = document.querySelectorAll('#btn');
-  allBtns.forEach(b => {
-    if (b.textContent.trim() === 'Contact Support') {
-      b.addEventListener('click', () => {
-        showModal('Contact Support', `
-          <div class="modal-form">
-            <label>Subject</label>
-            <input type="text" placeholder="Describe your issue briefly" />
-            <label>Message</label>
-            <textarea rows="4" placeholder="Write your message here..." style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;resize:none;font-size:14px;"></textarea>
-          </div>
-        `, () => showToast('Support message sent! We will get back to you within 24 hours.'));
-      });
+    // 2. Filter Digital Resources
+    let resResults = resources.filter(res => {
+        const matchesQuery = res.title.toLowerCase().includes(query) || res.author.toLowerCase().includes(query);
+        const matchesModule = !type || type === 'all' || type === 'All' || res.module === type;
+        return matchesQuery && matchesModule;
+    }).map(res => ({
+        id: res.id,
+        title: res.title,
+        author: res.author,
+        category: res.module,
+        status: res.status || 'Available',
+        borrowedBy: res.borrowedBy || null,
+        format: res.format,
+        cover: '',
+        isDigitalResource: true,
+        type: res.type,
+        path: res.path
+    }));
+
+    let combined = [...bookResults, ...resResults];
+
+    // Handle 'Available' filter flag
+    if (window._catalogFilterAvailable && context === 'Catalog') {
+        combined = combined.filter(item => item.isDigitalResource || item.status === 'Available');
     }
-  });
+
+    if (context === 'Home') {
+        renderHomeResults(combined);
+    } else {
+        renderBooks(combined);
+        const browseSection = document.getElementById('Browse');
+        if (browseSection && query) browseSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function renderHomeResults(results) {
+    const container = document.getElementById('homeSearchResults');
+    if (!container) return;
+
+    const query = document.getElementById('searchInputHome').value.trim();
+
+    container.style.display = 'block';
+    container.style.minHeight = '100px';
+    container.style.zIndex = '1000';
+
+    if (results.length === 0) {
+        container.innerHTML = `
+            <div class="home-no-results" style="margin-top: 20px; padding: 20px; background-color: #7f1d1d; color: white; border-radius: 12px; text-align: center; border: 2px solid white;">
+                <i class="fa-solid fa-circle-exclamation"></i> Sorry, no book found matching "${query}"
+            </div>`;
+        return;
+    }
+
+    // Helper to highlight matching text
+    const highlight = (text, q) => {
+        if (!q) return text;
+        const regex = new RegExp(`(${q})`, 'gi');
+        return text.replace(regex, '<span style="background-color: #fef08a; color: #111; font-weight: bold; padding: 0 2px; border-radius: 2px;">$1</span>');
+    };
+
+    container.innerHTML = `
+        <div class="home-results-grid" style="display: flex; flex-direction: column; gap: 15px; background: rgba(0, 0, 0, 0.7); padding: 25px; border-radius: 15px; backdrop-filter: blur(10px); margin-top: 20px; border: 1px solid rgba(255,255,255,0.2);">
+            <h3 style="color: white; margin-bottom: 10px;">Books matching "${query}" (${results.length})</h3>
+            ${results.map(book => `
+                <div class="home-book-card" style="display: flex; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <img src="${book.cover}" alt="${book.title}" style="width: 100px; height: 140px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/100x140?text=No+Cover'">
+                    <div class="home-book-details" style="padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="margin: 0; color: #111; font-size: 18px;">${highlight(book.title, query)}</h4>
+                            <p style="margin: 4px 0; color: #555; font-size: 14px;"><strong>Author:</strong> ${highlight(book.author, query)}</p>
+                            <p style="margin: 4px 0; color: #555; font-size: 14px;"><strong>Category:</strong> ${book.category}</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-weight: bold; font-size: 14px; color: ${book.status === 'Available' ? '#16a34a' : '#dc2626'}">${book.status}</span>
+                            <button onclick="borrowBook(${book.id})" 
+                                    style="padding: 8px 16px; background: #064e3b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                                    ${book.status !== 'Available' ? 'disabled style="background:#ccc; cursor:not-allowed;"' : ''}>
+                                ${book.status === 'Available' ? 'Borrow' : 'Borrowed'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+// --- Borrowing Logic ---
+function borrowBook(bookId) {
+    let book = books.find(b => b.id === bookId);
+    if (!book) book = resources.find(r => r.id === bookId);
+    
+    const currentStatus = book ? (book.status || 'Available') : null;
+    if (!book || currentStatus !== 'Available') return;
+
+    book.status = 'Borrowed';
+    book.borrowedBy = 'currentUser';
+    currentUser.borrowed = (currentUser.borrowed || 0) + 1;
+    currentUser.recent = (currentUser.recent || 0) + 1;
+
+    activityLog.unshift({
+        type: 'Borrowed',
+        book: book.title,
+        author: book.author,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        due: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        icon: 'fa-book-open',
+        statusClass: 'borrowed'
+    });
+
+    saveState();
+    refreshAllUI();
+    showToast(`✅ You borrowed "<strong>${book.title}</strong>" — Due in 14 days!`, 'success');
+}
+
+function returnBook(bookId) {
+    let book = books.find(b => b.id === bookId);
+    if (!book) book = resources.find(r => r.id === bookId);
+    
+    const currentStatus = book ? (book.status || 'Available') : null;
+    if (!book || currentStatus !== 'Borrowed' || book.borrowedBy !== 'currentUser') return;
+
+    book.status = 'Available';
+    book.borrowedBy = null;
+    currentUser.borrowed = Math.max(0, (currentUser.borrowed || 1) - 1);
+
+    activityLog.unshift({
+        type: 'Returned',
+        book: book.title,
+        author: book.author,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        due: '—',
+        icon: 'fa-rotate-left',
+        statusClass: 'returned'
+    });
+
+    saveState();
+    refreshAllUI();
+    showToast(`📚 "<strong>${book.title}</strong>" has been returned successfully!`, 'info');
+}
+
+function placeHold(bookId) {
+    let book = books.find(b => b.id === bookId);
+    if (!book) book = resources.find(r => r.id === bookId);
+    
+    if (!book) return;
+
+    const alreadyOnHold = userHolds.find(h => h.bookId === bookId);
+    if (alreadyOnHold) {
+        showToast(`⚠️ You already have a hold on "<strong>${book.title}</strong>"`, 'warning');
+        return;
+    }
+
+    userHolds.push({
+        id: `H${Date.now()}`,
+        bookId: book.id,
+        title: book.title,
+        author: book.author,
+        status: 'In Queue',
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        cover: book.cover || ''
+    });
+
+    activityLog.unshift({
+        type: 'On Hold',
+        book: book.title,
+        author: book.author,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        due: '—',
+        icon: 'fa-bookmark',
+        statusClass: 'hold'
+    });
+
+    saveState();
+    refreshAllUI();
+    showToast(`🔖 Hold placed on "<strong>${book.title}</strong>". You'll be notified when available!`, 'info');
+}
+
+// --- Toast Notification ---
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.cssText = `
+            position: fixed; bottom: 30px; right: 30px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 12px;
+        `;
+        document.body.appendChild(container);
+    }
+
+    const colors = {
+        success: { bg: '#f0fdf4', border: '#16a34a', icon: '#16a34a' },
+        info:    { bg: '#eff6ff', border: '#2563eb', icon: '#2563eb' },
+        warning: { bg: '#fffbeb', border: '#d97706', icon: '#d97706' }
+    };
+    const c = colors[type] || colors.success;
+
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        background: ${c.bg}; border: 1.5px solid ${c.border}; color: #1e293b;
+        padding: 16px 20px; border-radius: 14px; font-size: 14px; font-weight: 500;
+        font-family: 'Inter', sans-serif; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        max-width: 360px; animation: slideInToast 0.3s ease;
+        display: flex; align-items: center; gap: 12px;
+    `;
+    toast.innerHTML = `<span style="color:${c.icon}; font-size:20px;">●</span><span>${message}</span>`;
+    container.appendChild(toast);
+
+    // Add animation keyframes once
+    if (!document.getElementById('toastKeyframes')) {
+        const style = document.createElement('style');
+        style.id = 'toastKeyframes';
+        style.textContent = `
+            @keyframes slideInToast {
+                from { opacity: 0; transform: translateX(40px); }
+                to   { opacity: 1; transform: translateX(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    setTimeout(() => {
+        toast.style.transition = 'opacity 0.4s';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 400);
+    }, 3500);
 }
 
 
-// ── 11. LOGOUT ───────────────────────────────────────────────
+// --- Navigation Logic ---
+function navigateToSection(sectionId) {
+    console.log("Navigating to section:", sectionId);
+
+    // Update sidebar active state
+    const buttons = document.querySelectorAll('.sidebar-buttons button');
+    buttons.forEach(btn => {
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${sectionId}'`)) {
+            btn.classList.add('active-nav');
+        } else {
+            btn.classList.remove('active-nav');
+        }
+    });
+
+    // Handle Tab switching for Profile Dashboard
+    const panes = document.querySelectorAll('.tab-pane');
+    let foundTab = false;
+    panes.forEach(pane => {
+        if (pane.id === `pane-${sectionId}` || (sectionId === 'myprofile' && pane.id === 'pane-myprofile')) {
+            pane.classList.add('active');
+            foundTab = true;
+        } else {
+            pane.classList.remove('active');
+        }
+    });
+
+    // If it's a separate section on the page (not in tabs)
+    const target = document.getElementById(sectionId);
+    if (target && !foundTab) {
+        target.scrollIntoView({ behavior: 'smooth' });
+    } else if (foundTab) {
+        // Scroll to top of middle section if we switched tabs
+        document.querySelector('.middle').scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// --- Resource Data ---
+let resources = [
+    // DAA Category
+    { id: 1, title: 'Introduction to DAA', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '327 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/1 Intoduction (2).ppt', module: 'DAA' },
+    { id: 2, title: 'Analysis of Algorithms', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '624 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/2 Analysis of algorithm (2).ppt', module: 'DAA' },
+    { id: 3, title: 'Graph Theory', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '438 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/3 Graph.ppt', module: 'DAA' },
+    { id: 4, title: 'Divide & Conquer', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '335 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/4 Divide Conquer.ppt', module: 'DAA' },
+    { id: 5, title: 'Greedy Algorithms', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '175 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/5 Greedy.ppt', module: 'DAA' },
+    { id: 6, title: 'Dynamic Programming', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '225 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/6 Dynamic programming.ppt', module: 'DAA' },
+    { id: 7, title: 'Backtracking', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '209 KB', icon: 'fa-file-powerpoint', path: 'files/DAA/7 BackTrack.ppt', module: 'DAA' },
+    
+    // Web Category
+    { id: 8, title: 'Web Development Ch 1', author: 'Web Dept', type: 'Study Material', format: 'PPTX', size: '915 KB', icon: 'fa-file-powerpoint', path: 'files/web/Chapter 1.pptx', module: 'Web Development' },
+    { id: 9, title: 'HTML Essentials', author: 'Web Dept', type: 'Study Material', format: 'PPTX', size: '745 KB', icon: 'fa-file-powerpoint', path: 'files/web/Ch 2 HTML.pptx', module: 'Web Development' },
+    { id: 10, title: 'CSS Styling', author: 'Web Dept', type: 'Study Material', format: 'PPTX', size: '877 KB', icon: 'fa-file-powerpoint', path: 'files/web/Ch 3 CSS.pptx', module: 'Web Development' },
+    { id: 11, title: 'JavaScript Logic', author: 'Web Dept', type: 'Study Material', format: 'PPT', size: '5.3 MB', icon: 'fa-file-powerpoint', path: 'files/web/Ch 4 JavaScript.ppt', module: 'Web Development' },
+    { id: 12, title: 'Web Development Ch 5', author: 'Web Dept', type: 'Study Material', format: 'PPT', size: '1.8 MB', icon: 'fa-file-powerpoint', path: 'files/web/Chapter Five (2).ppt', module: 'Web Development' },
+    { id: 13, title: 'Web Development Ch 6', author: 'Web Dept', type: 'Study Material', format: 'PPTX', size: '1.9 MB', icon: 'fa-file-powerpoint', path: 'files/web/Chapter 6 (2).pptx', module: 'Web Development' },
+    { id: 14, title: 'Course Outline', author: 'Library Admin', type: 'E-Book', format: 'PDF', size: '185 KB', icon: 'fa-file-pdf', path: 'files/web/Course Outline.pdf', module: 'Web Development' },
+    
+    // Graphics Category
+    { id: 15, title: 'Computer Graphics Ch 1', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '560 KB', icon: 'fa-file-powerpoint', path: 'files/graphics/chap1 (9).ppt', module: 'Computer Graphics' },
+    { id: 16, title: 'Computer Graphics Ch 2', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '363 KB', icon: 'fa-file-powerpoint', path: 'files/graphics/chap2 (9).ppt', module: 'Computer Graphics' },
+    { id: 17, title: 'Computer Graphics Ch 3', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '571 KB', icon: 'fa-file-powerpoint', path: 'files/graphics/chap3 (6).ppt', module: 'Computer Graphics' },
+    { id: 18, title: 'Computer Graphics Ch 4', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '550 KB', icon: 'fa-file-powerpoint', path: 'files/graphics/chap4 (5).ppt', module: 'Computer Graphics' },
+    { id: 19, title: 'Computer Graphics Ch 6', author: 'Course Material', type: 'Study Material', format: 'PPT', size: '454 KB', icon: 'fa-file-powerpoint', path: 'files/graphics/chap 6 (2).ppt', module: 'Computer Graphics' },
+    { id: 20, title: 'OpenGL Programming Guide', author: 'Khronos Group', type: 'E-Book', format: 'PDF', size: '35.4 MB', icon: 'fa-file-pdf', path: 'files/graphics/opengl book (2).pdf', module: 'Computer Graphics' },
+    { id: 21, title: 'Computer Graphics Tutorials', author: 'YouTube Series', type: 'Video', format: 'Video', size: 'Playlist', icon: 'fa-circle-play', path: 'https://www.youtube.com/watch?v=Jv52kWUUCng&list=PLzfVsIhtvVY2dCi7RK4VGhSbrFHzSPz6A&index=23', module: 'Computer Graphics' }
+];
+
+let userHolds = JSON.parse(localStorage.getItem('userHolds')) || [
+    { id: 'H1', bookId: 3, title: 'The Pragmatic Programmer', author: 'Andrew Hunt', status: 'In Queue', date: 'May 08, 2026', cover: 'https://images-na.ssl-images-amazon.com/images/I/41HInlou71L._SX396_BO1,204,203,200_.jpg' }
+];
+
+let activityLog = JSON.parse(localStorage.getItem('activityLog')) || [
+    { type: 'Borrowed', book: 'Atomic Habits', author: 'James Clear', date: 'May 10, 2026', due: 'May 24, 2026', icon: 'fa-book-open', statusClass: 'borrowed' },
+    { type: 'On Hold', book: 'The Alchemist', author: 'Paulo Coelho', date: 'May 08, 2026', due: '—', icon: 'fa-bookmark', statusClass: 'hold' }
+];
+
+// --- Initialize Page ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Data Cleanup & Migration: Ensure books match the new module categories
+    let savedBooks = JSON.parse(localStorage.getItem('libraryBooks'));
+    if (savedBooks) {
+        // Migration: If any book has old categories (like Textbook), remap them
+        books = savedBooks.filter(b => b.title && b.title !== 'zdzfvh' && !b.title.includes('zdzfvh')).map(b => {
+            if (b.category === 'Textbook' || b.category === 'Reference' || b.category === 'Research') {
+                if (b.title.toLowerCase().includes('algorithm')) b.category = 'DAA';
+                else if (b.title.toLowerCase().includes('opengl') || b.title.toLowerCase().includes('graphics')) b.category = 'Computer Graphics';
+                else b.category = 'Web Development'; // Default for others
+            }
+            return b;
+        });
+        localStorage.setItem('libraryBooks', JSON.stringify(books));
+    }
+
+    loadUserProfile();
+    refreshAllUI();
+});
+
+function refreshAllUI() {
+    updateStats();
+    searchBook('Catalog'); // Use universal search for default view
+    searchResources();     // Use universal search for resources
+    updateHoldDisplay();
+    renderRecentActivity();
+}
+
+function saveState() {
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    localStorage.setItem('libraryBooks', JSON.stringify(books));
+    localStorage.setItem('userHolds', JSON.stringify(userHolds));
+    localStorage.setItem('activityLog', JSON.stringify(activityLog));
+}
+
+function renderRecentActivity() {
+    const tbody = document.getElementById('recentActivityBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = activityLog.map(act => `
+        <tr>
+            <td>
+                <div class="activity-icon-cell">
+                    <i class="fa-solid ${act.icon}"></i>
+                </div>
+            </td>
+            <td>
+                <div class="book-title">${act.book}</div>
+                <div class="book-author">${act.author}</div>
+            </td>
+            <td>${act.date}</td>
+            <td>${act.due}</td>
+            <td><span class="activity-badge ${act.statusClass}">${act.type}</span></td>
+        </tr>
+    `).join('');
+}
+
+// --- Catalog Filtering Logic ---
+function filterCatalog(filterType) {
+    // Update active button UI
+    const buttons = document.querySelectorAll('.qf-btn');
+    buttons.forEach(btn => {
+        const onclick = btn.getAttribute('onclick');
+        if (onclick && onclick.includes(`'${filterType}'`)) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    const categorySelect = document.getElementById('categories');
+    
+    if (filterType === 'available') {
+        window._catalogFilterAvailable = true;
+        if (categorySelect) categorySelect.value = 'all';
+    } else if (filterType === 'all') {
+        window._catalogFilterAvailable = false;
+        if (categorySelect) categorySelect.value = 'all';
+    } else {
+        window._catalogFilterAvailable = false;
+        if (categorySelect) categorySelect.value = filterType;
+    }
+
+    document.getElementById('searchInputBooks').value = '';
+    searchBook('Catalog');
+}
+
+// --- Resources Logic ---
+function renderResources(data) {
+    const grid = document.getElementById('allResourcesGrid');
+    if (!grid) return;
+
+    if (data.length === 0) {
+        grid.innerHTML = '<div class="no-results" style="grid-column: 1/-1; padding: 40px; text-align: center; color: #666;">No resources found matching your criteria.</div>';
+        return;
+    }
+
+    grid.innerHTML = data.map(res => {
+        // A physical book = has isCatalogBook flag OR type is 'Physical Book' OR type is 'E-Book'
+        const isBook = res.isCatalogBook === true || res.type === 'Physical Book' || (res.type && res.type.toLowerCase().includes('book'));
+        const status = res.status || 'Available';
+        const isAvailable = status === 'Available';
+        const isBorrowedByMe = status === 'Borrowed' && res.borrowedBy === 'currentUser';
+        const isBorrowedByOther = status === 'Borrowed' && res.borrowedBy !== 'currentUser';
+
+        return `
+        <div class="resource-card">
+            <div class="resource-cover">
+                <span class="resource-tag">${isBook ? 'Physical Book' : 'Study Material'}</span>
+                <div class="cover-placeholder">
+                    <i class="fa-solid ${isBook ? 'fa-book' : (res.format === 'Video' ? 'fa-circle-play' : 'fa-file-pdf')}"></i>
+                </div>
+                ${isBook && status === 'Borrowed' ? `<div class="borrowed-badge">Borrowed</div>` : ''}
+            </div>
+            <div class="resource-card-info">
+                <h4>${res.title}</h4>
+                <p class="resource-author">${isBook ? 'by ' + res.author : 'Course Material'}</p>
+                <p class="resource-meta">
+                    <i class="fa-solid ${isBook ? (isAvailable ? 'fa-circle-check' : 'fa-circle-xmark') : 'fa-file-powerpoint'}"
+                       style="color: ${isBook ? (isAvailable ? '#16a34a' : '#dc2626') : ''}"></i>
+                    ${isBook ? status : res.format + ' ' + (res.size || '')}
+                </p>
+                ${res.format === 'Video' || res.type === 'Video' ? `
+                    <button class="resource-action-btn" onclick="viewResource(${res.id})" style="border-color: #8b5cf6; color: #7c3aed;">
+                        <i class="fa-solid fa-circle-play" style="color: #8b5cf6;"></i> Watch Now
+                    </button>
+                ` : isAvailable ? `
+                    <button class="resource-action-btn btn-borrow" onclick="borrowBook(${res.id})">
+                        <i class="fa-solid fa-book-reader"></i> Borrow Book
+                    </button>
+                ` : isBorrowedByMe ? `
+                    <button class="resource-action-btn btn-return" onclick="returnBook(${res.id})">
+                        <i class="fa-solid fa-rotate-left"></i> Return Book
+                    </button>
+                ` : `
+                    <button class="resource-action-btn btn-hold" onclick="placeHold(${res.id})">
+                        <i class="fa-solid fa-bookmark"></i> Place Hold
+                    </button>
+                `}
+            </div>
+        </div>
+    `}).join('');
+}
+
+function searchResources() {
+    const query = document.getElementById('resourceSearchInput').value.toLowerCase();
+    const module = document.getElementById('resourceTypeSelect').value;
+    const format = document.getElementById('resourceFormatSelect').value;
+    const sort = document.getElementById('resourceSortSelect').value;
+
+    // Filter digital resources
+    let filteredRes = resources.filter(res => {
+        const matchesQuery = res.title.toLowerCase().includes(query) || res.author.toLowerCase().includes(query);
+        const matchesModule = module === 'All' || res.module === module;
+        const matchesFormat = format === 'All' || res.format === format;
+        return matchesQuery && matchesModule && matchesFormat;
+    });
+
+    // Always merge in catalog books that match the module/query (books always shown)
+    let mappedBooks = books.filter(b => {
+        const matchesQuery = !query || b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query);
+        const matchesModule = module === 'All' || b.category === module;
+        return matchesQuery && matchesModule;
+    }).map(b => ({
+        id: b.id,
+        title: b.title,
+        author: b.author,
+        type: 'Physical Book',
+        format: 'Book',
+        size: b.status,
+        icon: 'fa-book',
+        path: null,
+        module: b.category,
+        isCatalogBook: true,
+        status: b.status
+    }));
+
+    // Books first, then digital resources
+    let combined = [...mappedBooks, ...filteredRes];
+
+    // Handle 'Available' filter toggle
+    if (window._resourceFilterAvailable) {
+        combined = combined.filter(item => !item.isCatalogBook || item.status === 'Available');
+    }
+
+    if (sort === 'popular') {
+        combined.sort((a, b) => b.id - a.id);
+    }
+
+    renderResources(combined);
+}
+
+function filterResources(moduleName) {
+    // Update button UI
+    const buttons = document.querySelectorAll('.rf-btn');
+    buttons.forEach(btn => {
+        const onclick = btn.getAttribute('onclick');
+        if (onclick && onclick.includes(`'${moduleName}'`)) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    const typeSelect = document.getElementById('resourceTypeSelect');
+    if (typeSelect) {
+        if (moduleName === 'All' || moduleName === 'Available') typeSelect.value = 'All';
+        else if (moduleName.includes('DAA')) typeSelect.value = 'DAA';
+        else if (moduleName.includes('Web')) typeSelect.value = 'Web Development';
+        else if (moduleName.includes('Graphics')) typeSelect.value = 'Computer Graphics';
+    }
+
+    // Set flag for 'Available' filter
+    window._resourceFilterAvailable = (moduleName === 'Available');
+    
+    document.getElementById('resourceSearchInput').value = '';
+    searchResources();
+}
+
+function viewResource(id) {
+    const res = resources.find(r => r.id === id);
+    if (res && res.path) {
+        window.open(res.path, '_blank');
+    } else if (res) {
+        alert(`Opening ${res.type}: ${res.title}`);
+    }
+}
+
+// --- Hold Page Logic ---
+function updateHoldDisplay() {
+    const grid = document.getElementById('activeHoldsGrid');
+    if (!grid) return;
+
+    const countHeader = document.getElementById('holdCountHeader');
+    const readyCountEl = document.getElementById('holdsReadyCount');
+    const queueCountEl = document.getElementById('holdsQueueCount');
+
+    if (countHeader) countHeader.textContent = userHolds.length;
+
+    let readyCount = 0;
+    let queueCount = 0;
+
+    if (userHolds.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: #666;">You have no active holds at the moment.</div>';
+    } else {
+        grid.innerHTML = userHolds.map(hold => {
+            if (hold.status === 'Ready') readyCount++;
+            else queueCount++;
+
+            return `
+                <div class="hold-item-card">
+                    <div class="hold-item-cover">
+                        <img src="${hold.cover}" alt="${hold.title}" onerror="this.src='https://via.placeholder.com/80x110?text=Book'">
+                    </div>
+                    <div class="hold-item-info">
+                        <span class="hold-status-tag ${hold.status === 'Ready' ? 'ready' : 'queue'}">${hold.status}</span>
+                        <h4>${hold.title}</h4>
+                        <p>by ${hold.author}</p>
+                        <button class="hold-cancel-btn" onclick="cancelHold('${hold.id}')">Cancel Hold</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    if (readyCountEl) readyCountEl.textContent = readyCount;
+    if (queueCountEl) queueCountEl.textContent = queueCount;
+}
+
+function cancelHold(holdId) {
+    if (confirm('Are you sure you want to cancel this hold?')) {
+        userHolds = userHolds.filter(h => h.id !== holdId);
+        localStorage.setItem('userHolds', JSON.stringify(userHolds));
+        currentUser.holds = userHolds.length;
+        saveState();
+        updateStats();
+        updateHoldDisplay();
+        alert('Hold cancelled successfully.');
+    }
+}
+
+function placeHold(bookId) {
+    const book = books.find(b => b.id === bookId);
+    if (!book) return;
+
+    if (userHolds.some(h => h.bookId === bookId)) {
+        alert('You already have a hold on this book.');
+        return;
+    }
+
+    const newHold = {
+        id: 'H' + Date.now(),
+        bookId: book.id,
+        title: book.title,
+        author: book.author,
+        status: 'In Queue',
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        cover: book.cover
+    };
+
+    userHolds.push(newHold);
+    
+    // Add to Activity Log
+    activityLog.unshift({
+        type: 'On Hold',
+        book: book.title,
+        author: book.author,
+        date: newHold.date,
+        due: '—',
+        icon: 'fa-bookmark',
+        statusClass: 'hold'
+    });
+
+    currentUser.holds = userHolds.length;
+    saveState();
+    refreshAllUI();
+    alert(`Hold placed for "${book.title}". You are now in the queue.`);
+}
+
+// Add feedback effect to cards on click
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.dashboard-cards, .dashboard, .resource-card, .hold-item-card');
+    cards.forEach(card => {
+        card.addEventListener('mousedown', () => {
+            card.style.transform = 'scale(0.95)';
+        });
+        card.addEventListener('mouseup', () => {
+            card.style.transform = 'scale(1)';
+        });
+    });
+});
 
 function logout() {
-  showConfirm('Are you sure you want to logout?', () => {
-    localStorage.removeItem('userLoggedIn');
-    showToast('Logging out...');
-    setTimeout(() => { window.location.href = 'login.html'; }, 1200);
-  });
-}
-
-
-// ── 12. MODAL SYSTEM ─────────────────────────────────────────
-
-/*
-  Add this HTML just before </body> in user.html:
-
-  <!-- Toast -->
-  <div id="toastNotification" style="
-    display:none;position:fixed;bottom:28px;right:28px;
-    background:#1e293b;color:#fff;padding:14px 22px;
-    border-radius:10px;font-size:15px;z-index:9999;
-    box-shadow:0 4px 20px rgba(0,0,0,0.25);
-    max-width:360px;line-height:1.4;
-  "></div>
-
-  <!-- Confirm / Info Modal -->
-  <div id="appModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);
-    z-index:9998;display:none;align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:14px;padding:32px;max-width:540px;width:92%;
-      max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
-      <h3 id="modalTitle" style="font-size:22px;font-weight:800;margin-bottom:18px;color:#0b2e13;"></h3>
-      <div id="modalBody"></div>
-      <div id="modalActions" style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px;"></div>
-    </div>
-  </div>
-*/
-
-function showModal(title, bodyHtml, onOk = null) {
-  const modal   = document.getElementById('appModal');
-  const mTitle  = document.getElementById('modalTitle');
-  const mBody   = document.getElementById('modalBody');
-  const mActs   = document.getElementById('modalActions');
-  if (!modal) return;
-
-  mTitle.textContent = title;
-  mBody.innerHTML    = bodyHtml;
-  mActs.innerHTML    = '';
-
-  if (onOk) {
-    const okBtn = document.createElement('button');
-    okBtn.textContent = 'Save';
-    okBtn.style.cssText = 'padding:10px 28px;background:#0b2e13;color:white;border:none;border-radius:8px;cursor:pointer;font-size:15px;font-weight:600;';
-    okBtn.addEventListener('click', () => { onOk(); closeModal(); });
-    mActs.appendChild(okBtn);
-  }
-
-  const closeBtn = document.createElement('button');
-  closeBtn.textContent = onOk ? 'Cancel' : 'Close';
-  closeBtn.style.cssText = 'padding:10px 28px;background:#e5e7eb;color:#374151;border:none;border-radius:8px;cursor:pointer;font-size:15px;font-weight:600;';
-  closeBtn.addEventListener('click', closeModal);
-  mActs.appendChild(closeBtn);
-
-  modal.style.display = 'flex';
-}
-
-function closeModal() {
-  const modal = document.getElementById('appModal');
-  if (modal) modal.style.display = 'none';
-}
-
-// Close modal on backdrop click
-document.addEventListener('click', (e) => {
-  const modal = document.getElementById('appModal');
-  if (modal && e.target === modal) closeModal();
-});
-
-function showConfirm(message, onOk) {
-  showModal('Confirm', `<p style="font-size:16px;color:#374151;">${escHtml(message)}</p>`, onOk);
-}
-
-let _toastTimer = null;
-function showToast(message, duration = 3500) {
-  const toast = document.getElementById('toastNotification');
-  if (!toast) { console.info('[Toast]', message); return; }
-  toast.textContent = message;
-  toast.style.display = 'block';
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => { toast.style.display = 'none'; }, duration);
-}
-
-
-// ── 13. HELPERS ──────────────────────────────────────────────
-
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function debounce(fn, delay) {
-  let t;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
-}
-
-
-// ── 14. MODAL CSS (injected automatically) ───────────────────
-// Injects .modal-form styles so the edit/settings forms look clean
-(function injectModalStyles() {
-  const style = document.createElement('style');
-  style.textContent = `
-    .modal-form { display:flex; flex-direction:column; gap:8px; }
-    .modal-form label { font-size:13px; font-weight:600; color:#374151; margin-top:6px; }
-    .modal-form input, .modal-form select, .modal-form textarea {
-      padding:10px 14px; border:1px solid #d1d5db; border-radius:8px;
-      font-size:14px; outline:none; width:100%;
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('userLoggedIn');
+        window.location.href = 'login.html';
     }
-    .modal-form input:focus, .modal-form select:focus, .modal-form textarea:focus {
-      border-color:#0b2e13; box-shadow:0 0 0 2px rgba(11,46,19,0.1);
-    }
-    .on-hold { background:#fef3c7 !important; color:#92400e !important; }
-  `;
-  document.head.appendChild(style);
-})();
+}
+

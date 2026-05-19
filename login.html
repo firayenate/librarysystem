@@ -21,16 +21,17 @@
             </div>
             <h2 id="loginTitle">Admin Login</h2>
             <div class="form-login">
-                <form id="loginForm" onsubmit="return handleLogin()">
+                <form id="loginForm" method="POST" action="login_handler.php">
+                   <input type="hidden" name="login_type" id="loginType" value="admin">
                    <h5 id="idLabel">Admin ID:</h5>
                 <div class="input-box">
                     <i class="fa-solid fa-id-card"></i>
-                    <input type="text" id="loginId" placeholder="Enter ID" required>
+                    <input type="text" id="loginId" name="login_id" placeholder="Enter ID" required>
                 </div>
-                    <h5>Admin Password:</h5>
+                    <h5>Password:</h5>
                     <div class="input-box">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" id="loginPassword" placeholder="Enter password" required minlength="6">
+                        <input type="password" id="loginPassword" name="password" placeholder="Enter password" required minlength="6">
                     </div>
                     <div class="check">
                     <input type="checkbox" id="remember"> Remember Me<br><br>
@@ -71,33 +72,8 @@
             
             document.getElementById('registerAdminText').style.display = mode === 'admin' ? 'block' : 'none';
             document.getElementById('registerStudentText').style.display = mode === 'student' ? 'block' : 'none';
-        }
-
-        function handleLogin() {
-            const id = document.getElementById('loginId').value.trim();
-            const password = document.getElementById('loginPassword').value;
-
-            if (loginMode === 'admin') {
-                const savedId = localStorage.getItem('adminId') || 'ADM1234';
-                const savedPassword = localStorage.getItem('adminPassword') || 'admin123';
-
-                if (id !== savedId) {
-                    alert('Admin ID is not correct.');
-                    return false;
-                }
-                if (password !== savedPassword) {
-                    alert('Admin password is not correct.');
-                    return false;
-                }
-
-                localStorage.setItem('adminLoggedIn', 'true');
-                window.location.href = "Admin.html";
-            } else {
-                // Mock Student Login
-                localStorage.setItem('userLoggedIn', 'true');
-                window.location.href = "User.html";
-            }
-            return false;
+            
+            document.getElementById('loginType').value = mode;
         }
     </script>
 </body>
