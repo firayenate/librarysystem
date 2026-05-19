@@ -7,6 +7,7 @@ function toggleMenu() {
     nav.classList.toggle('active');
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
     loadAdminProfile();
     handleRouting();
@@ -194,6 +195,7 @@ function openIssueBookForm() {
 
 function closeIssueBookForm() { 
     document.getElementById('issueBookModal').style.display = 'none'; 
+    
     // Reset highlights
     if (document.getElementById('issueStudentId')) document.getElementById('issueStudentId').style.borderColor = '';
     if (document.getElementById('issueBookId')) document.getElementById('issueBookId').style.borderColor = '';
@@ -341,7 +343,7 @@ async function renderRegisteredStudents() {
         `).join('');
     } catch (err) {
         console.error(err);
-    }
+  }
 }
 
 function selectStudent(index) {
@@ -383,6 +385,7 @@ async function saveStudentInfo(event) {
         }
     }
     if (pwdMsg) pwdMsg.style.display = 'none';
+    
     // --------------------------
 
     const payload = {
